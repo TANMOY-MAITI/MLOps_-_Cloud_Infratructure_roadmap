@@ -192,7 +192,7 @@ Just one `index.html` file — open it anywhere and it works.
 
 ```bash
 # Clone the repo
-git clone https://github.com/TANMOY-MAITI/roadmap.git
+git clone [https://github.com/TANMOY-MAITI/roadmap.git](https://tanmoy-maiti.github.io/MLOps_-_Cloud_Infratructure_roadmap/)
 
 # Open directly in browser — no server needed
 open index.html        # macOS
