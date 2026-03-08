@@ -1,505 +1,879 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#0d0d1a"/>
   <title>Cloud & AI/ML Engineer Roadmap 2026</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #0a0a0f; font-family: 'Courier New', monospace; }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    /* ── RESET & BASE ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { height: 100%; }
+    body {
+      font-family: 'Courier New', monospace;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      min-height: 100%;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior: none;
+    }
+
+    /* ── SCROLLBAR ────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
     ::-webkit-scrollbar-track { background: #0d0d1a; }
-    ::-webkit-scrollbar-thumb { background: #222; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #333; }
+    ::-webkit-scrollbar-thumb { background: #2a2a3e; border-radius: 2px; }
+
+    /* ── LAYOUT SHELL ─────────────────────────────────────────── */
+    #app { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; }
+
+    /* ── HEADER ───────────────────────────────────────────────── */
+    #header {
+      background: linear-gradient(135deg, #0d0d1a 0%, #111128 100%);
+      border-bottom: 1px solid #222;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-shrink: 0;
+      z-index: 50;
+    }
+    #header-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    #header-title-group { min-width: 0; }
+    #header-eyebrow { font-size: 9px; letter-spacing: 3px; color: #555; text-transform: uppercase; }
+    #header-title { font-size: 16px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    #save-flash {
+      font-size: 10px; color: #00FFB2; background: #00FFB210;
+      border: 1px solid #00FFB230; border-radius: 5px;
+      padding: 3px 8px; opacity: 0; transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    #save-flash.show { opacity: 1; }
+    #btn-reset {
+      font-size: 10px; color: #555; background: transparent;
+      border: 1px solid #2a2a3e; border-radius: 6px;
+      padding: 6px 10px; cursor: pointer;
+      font-family: inherit; letter-spacing: 1px;
+      min-height: 36px;
+    }
+    #btn-reset:hover { color: #ff6b6b; border-color: #ff6b6b44; }
+    #progress-label { font-size: 9px; color: #555; letter-spacing: 2px; text-align: right; }
+    #progress-pct { font-size: 22px; font-weight: 700; color: #00FFB2; line-height: 1; text-align: right; }
+    #progress-ring-wrap {
+      width: 42px; height: 42px; border-radius: 50%;
+      border: 3px solid #1a1a2e; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: conic-gradient(#00FFB2 0deg, #1a1a2e 0deg);
+      transition: background 0.4s;
+    }
+    #progress-ring-inner {
+      width: 32px; height: 32px; border-radius: 50%; background: #0d0d1a;
+    }
+    #btn-menu {
+      display: none;
+      background: transparent; border: 1px solid #2a2a3e;
+      border-radius: 8px; color: #00FFB2;
+      font-size: 18px; line-height: 1;
+      padding: 6px 10px; cursor: pointer;
+      min-width: 40px; min-height: 40px;
+      align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ── PHASE TABS ───────────────────────────────────────────── */
+    #tabs {
+      display: flex; overflow-x: auto; background: #0d0d1a;
+      border-bottom: 1px solid #1a1a2e;
+      padding: 0 8px; gap: 2px; flex-shrink: 0;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    #tabs::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      background: transparent; border: none;
+      border-bottom: 2px solid transparent;
+      color: #555; padding: 10px 12px;
+      cursor: pointer; white-space: nowrap;
+      font-size: 11px; font-family: inherit;
+      font-weight: 400; letter-spacing: 0.5px;
+      transition: all 0.2s;
+      display: flex; align-items: center; gap: 6px;
+      flex-shrink: 0; min-height: 44px;
+    }
+    .tab-btn.active { background: #111128; font-weight: 700; }
+    .tab-badge {
+      border-radius: 10px; padding: 1px 6px;
+      font-size: 9px; background: #1a1a2e; color: #555;
+      transition: all 0.3s;
+    }
+    .tab-badge.done { color: #000 !important; }
+    .tab-icon { font-size: 14px; }
+    .tab-label { }
+
+    /* ── BODY ROW ─────────────────────────────────────────────── */
+    #body {
+      display: flex; flex: 1; min-height: 0; overflow: hidden;
+    }
+
+    /* ── SIDEBAR ──────────────────────────────────────────────── */
+    #sidebar {
+      width: 260px; flex-shrink: 0;
+      background: #0d0d1a;
+      border-right: 1px solid #1a1a2e;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    #sidebar-header {
+      padding: 12px 14px 10px;
+      border-bottom: 1px solid #1a1a2e;
+      flex-shrink: 0;
+    }
+    #sidebar-phase-label { font-size: 9px; letter-spacing: 3px; color: #555; text-transform: uppercase; }
+    #sidebar-phase-sub { font-size: 11px; color: #444; margin-top: 2px; }
+    #sidebar-phase-bar-wrap { margin-top: 8px; height: 3px; background: #1a1a2e; border-radius: 2px; }
+    #sidebar-phase-bar { height: 100%; width: 0%; border-radius: 2px; transition: width 0.4s; }
+    #sidebar-modules { overflow-y: auto; flex: 1; }
+    .mod-btn {
+      width: 100%; text-align: left;
+      background: transparent; border: none;
+      border-left: 3px solid transparent;
+      padding: 11px 14px; cursor: pointer;
+      transition: all 0.15s; display: block;
+      min-height: 56px;
+    }
+    .mod-btn:hover { background: #0f0f20; }
+    .mod-btn.active { background: #111128; }
+    .mod-btn-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+    .mod-btn-title { font-size: 12px; color: #bbb; font-family: inherit; font-weight: 400; }
+    .mod-btn.active .mod-btn-title { font-weight: 700; }
+    .depth-badge {
+      font-size: 9px; padding: 2px 6px; border-radius: 4px;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .depth-Deep { color: #ff6b6b; background: #ff6b6b18; }
+    .depth-Core { color: #4d9fff; background: #4d9fff18; }
+    .depth-Practical { color: #ffb347; background: #ffb34718; }
+    .mod-btn-sub { font-size: 10px; color: #444; margin-top: 3px; }
+    .mod-btn-bar-wrap { margin-top: 5px; height: 2px; background: #1a1a2e; border-radius: 1px; }
+    .mod-btn-bar { height: 100%; width: 0%; border-radius: 1px; transition: width 0.3s; }
+
+    /* ── MAIN PANEL ───────────────────────────────────────────── */
+    #main {
+      flex: 1; overflow-y: auto; padding: 16px;
+      min-width: 0;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* ── CARD GRID ────────────────────────────────────────────── */
+    #card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 12px;
+    }
+    .mod-card {
+      background: #111128; border: 1px solid #1a1a2e;
+      border-radius: 12px; padding: 16px;
+      cursor: pointer; transition: border-color 0.2s;
+      display: flex; flex-direction: column;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .mod-card:hover { border-color: var(--phase-color); }
+    .mod-card:active { opacity: 0.85; }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
+    .card-title { font-size: 13px; font-weight: 700; color: #fff; }
+    .card-count { font-size: 11px; color: #555; margin-bottom: 8px; }
+    .card-preview { font-size: 11px; margin-bottom: 2px; display: flex; gap: 6px; color: #444; }
+    .card-preview.done { color: var(--phase-color); }
+    .card-more { font-size: 10px; color: #333; margin-top: 2px; }
+    .card-bar-wrap { margin-top: auto; padding-top: 10px; }
+    .card-bar-track { height: 3px; background: #1a1a2e; border-radius: 2px; }
+    .card-bar-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
+    .card-bar-label { font-size: 10px; color: #444; margin-top: 4px; }
+
+    /* ── CONCEPT LIST ─────────────────────────────────────────── */
+    #concept-view { display: none; flex-direction: column; }
+    #concept-view.visible { display: flex; }
+    #concept-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 14px;
+      position: sticky; top: 0;
+      background: #0a0a0f;
+      padding-bottom: 12px; padding-top: 2px;
+      border-bottom: 1px solid #1a1a2e;
+      z-index: 10;
+    }
+    #btn-back {
+      background: #111128; border: 1px solid #2a2a3e;
+      color: #888; padding: 8px 14px; border-radius: 8px;
+      cursor: pointer; font-size: 13px; font-family: inherit;
+      min-height: 44px; min-width: 44px; flex-shrink: 0;
+      white-space: nowrap;
+    }
+    #btn-back:hover { color: #ccc; }
+    #concept-title-wrap { min-width: 0; }
+    #concept-title { font-size: 15px; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #concept-hint { font-size: 10px; color: #555; margin-top: 2px; }
+    #concept-list { display: flex; flex-direction: column; gap: 9px; }
+    .concept-row {
+      background: #111128; border: 1px solid #1a1a2e;
+      border-radius: 12px; padding: 14px 16px;
+      cursor: pointer; transition: background 0.2s, border-color 0.2s;
+      display: flex; gap: 14px; align-items: flex-start;
+      min-height: 64px; -webkit-tap-highlight-color: transparent;
+    }
+    .concept-row:active { opacity: 0.85; }
+    .concept-row.done { border-color: var(--concept-done-border); background: var(--concept-done-bg); }
+    .concept-check {
+      width: 26px; height: 26px; border-radius: 50%;
+      border: 2px solid #333; background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; color: transparent;
+      transition: all 0.2s; flex-shrink: 0; margin-top: 1px;
+    }
+    .concept-row.done .concept-check { color: #000; border-color: var(--phase-color); background: var(--phase-color); }
+    .concept-body { flex: 1; min-width: 0; }
+    .concept-name { font-size: 13px; font-weight: 700; color: #ddd; margin-bottom: 5px; }
+    .concept-row.done .concept-name { color: var(--phase-color); }
+    .concept-detail { font-size: 11px; color: #666; line-height: 1.65; }
+    #concept-bottom-pad { height: 40px; }
+
+    /* ── MOBILE OVERLAY ───────────────────────────────────────── */
+    #overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.65); z-index: 200;
+    }
+    #drawer {
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: min(80vw, 300px);
+      background: #0d0d1a; border-right: 1px solid #1a1a2e;
+      z-index: 201; display: flex; flex-direction: column;
+      overflow: hidden;
+      transform: translateX(-100%);
+      transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+    }
+    #drawer.open { transform: translateX(0); }
+    #overlay.open { display: block; }
+    #drawer-sidebar-header {
+      padding: 56px 14px 10px;
+      border-bottom: 1px solid #1a1a2e; flex-shrink: 0;
+    }
+    #drawer-modules { overflow-y: auto; flex: 1; -webkit-overflow-scrolling: touch; }
+
+    /* ── MOBILE TOPBAR LABEL ──────────────────────────────────── */
+    #mobile-phase-bar {
+      display: none;
+      padding: 8px 14px;
+      background: #0d0d1a;
+      border-bottom: 1px solid #111128;
+      align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    #mobile-phase-label { font-size: 10px; letter-spacing: 2px; color: #555; text-transform: uppercase; }
+    #mobile-phase-sub { font-size: 11px; color: #444; }
+    #btn-open-drawer {
+      font-size: 11px; border-radius: 6px;
+      padding: 6px 12px; cursor: pointer;
+      font-family: inherit; white-space: nowrap;
+      min-height: 36px; border: 1px solid;
+    }
+
+    /* ── RESPONSIVE BREAKPOINTS ───────────────────────────────── */
+    @media (max-width: 767px) {
+      /* show hamburger, hide desktop sidebar */
+      #btn-menu { display: flex; }
+      #sidebar { display: none; }
+
+      /* show mobile phase bar */
+      #mobile-phase-bar { display: flex; }
+
+      /* header tweaks */
+      #header { padding: 8px 12px; }
+      #header-title { font-size: 13px; }
+      #progress-pct { font-size: 18px; }
+      #progress-ring-wrap { width: 36px; height: 36px; }
+      #progress-ring-inner { width: 26px; height: 26px; }
+      #save-flash { display: none; }
+
+      /* tabs: icon + short label only */
+      .tab-label { display: none; }
+      .tab-btn { padding: 10px 8px; gap: 3px; }
+
+      /* card grid: single column */
+      #card-grid { grid-template-columns: 1fr; }
+
+      /* bigger concept rows on touch */
+      .concept-detail { font-size: 12px; }
+      .concept-name { font-size: 14px; }
+
+      /* main padding */
+      #main { padding: 12px; }
+    }
+
+    @media (min-width: 768px) {
+      #header-title { font-size: 20px; }
+      #progress-pct { font-size: 24px; }
+    }
+
+    @media (min-width: 1024px) {
+      #sidebar { width: 280px; }
+      #card-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    }
   </style>
 </head>
 <body>
-  <div id="root"></div>
+<div id="app">
 
-  <script type="text/babel">
-    const { useState } = React;
+  <!-- HEADER -->
+  <div id="header">
+    <div id="header-left">
+      <button id="btn-menu" aria-label="Open modules">☰</button>
+      <div id="header-title-group">
+        <div id="header-eyebrow">Career Roadmap 2026</div>
+        <div id="header-title">Cloud &amp; AI/ML Engineer</div>
+      </div>
+    </div>
+    <div id="header-right">
+      <div id="save-flash">✓ Saved</div>
+      <button id="btn-reset">RESET</button>
+      <div>
+        <div id="progress-label">OVERALL</div>
+        <div id="progress-pct">0%</div>
+      </div>
+      <div id="progress-ring-wrap">
+        <div id="progress-ring-inner"></div>
+      </div>
+    </div>
+  </div>
 
-    const phases = [
-      {
-        id: 1, title: "Foundations", subtitle: "Months 1–2", color: "#00FFB2", icon: "🧱",
-        modules: [
-          { title: "DSA — Light & Targeted", depth: "Core", concepts: [
-            { name: "Arrays & HashMaps", detail: "Two-pointer, sliding window, frequency maps — the bread and butter of coding screens at startups" },
-            { name: "Stacks & Queues", detail: "Monotonic stacks, deque patterns, BFS queue — comes up in pipeline/task scheduling logic" },
-            { name: "Linked Lists", detail: "Fast/slow pointer, reversal, merge — classic screening questions, 1–2 hours to be solid" },
-            { name: "Trees & Recursion", detail: "Binary trees, DFS/BFS traversal, recursion patterns — base for understanding ML tree models too" },
-            { name: "Graph Traversal", detail: "BFS, DFS, topological sort — directly applies to DAG-based ML pipeline orchestration (Airflow, Kubeflow)" },
-            { name: "Sorting & Searching", detail: "QuickSort, MergeSort, Binary Search — know time/space complexity of each, O(n log n) intuition" },
-            { name: "Dynamic Programming (Light)", detail: "Memoization, tabulation — only need Easy/Medium DP; skip advanced DP for MLOps roles" },
-          ]},
-          { title: "Operating Systems", depth: "Core", concepts: [
-            { name: "Processes vs Threads", detail: "Fork, exec, PID, process states, context switching — critical for understanding containers and parallel training" },
-            { name: "Memory Management", detail: "Virtual memory, heap vs stack, paging, memory leaks — needed when debugging OOM kills in Kubernetes pods" },
-            { name: "File Systems & I/O", detail: "inodes, file descriptors, buffered vs unbuffered I/O, /proc filesystem — daily tools in MLOps debugging" },
-            { name: "Signals & IPC", detail: "SIGTERM, SIGKILL, pipes, sockets, shared memory — how containers communicate and shut down gracefully" },
-            { name: "Scheduling", detail: "CPU scheduling algorithms, nice values, cgroups — underpins Kubernetes resource limits and requests" },
-            { name: "Concurrency & Locks", detail: "Mutex, semaphore, deadlock, race conditions — essential for writing safe multi-threaded ML data loaders" },
-          ]},
-          { title: "Networking Fundamentals", depth: "Core", concepts: [
-            { name: "OSI & TCP/IP Model", detail: "Layers 1–7, where each protocol lives — mental model for debugging any cloud connectivity issue" },
-            { name: "DNS & HTTP/HTTPS", detail: "How DNS resolution works, HTTP verbs, status codes, TLS handshake — you'll configure this in every deployment" },
-            { name: "TCP vs UDP", detail: "Connection-oriented vs connectionless, 3-way handshake, why gRPC uses HTTP/2 over TCP" },
-            { name: "Load Balancers & Proxies", detail: "L4 vs L7 load balancing, reverse proxies (Nginx), sticky sessions — core to serving ML models at scale" },
-            { name: "REST vs gRPC", detail: "JSON over HTTP vs Protobuf over HTTP/2 — gRPC is preferred for high-throughput ML inference APIs" },
-            { name: "VPC & Subnets", detail: "CIDR blocks, public vs private subnets, NAT gateway, security groups — AWS VPC design for ML infrastructure" },
-            { name: "Ports & Firewalls", detail: "Well-known ports, iptables basics, security groups vs NACLs — debugging unreachable services in the cloud" },
-          ]},
-          { title: "Linux & Bash Mastery", depth: "Deep", concepts: [
-            { name: "File System Navigation", detail: "ls, find, locate, tree, du, df — knowing your way around a Linux filesystem blindfolded" },
-            { name: "Permissions & Users", detail: "chmod, chown, sudo, /etc/passwd, groups, umask — essential for container security and CI/CD runners" },
-            { name: "Process Management", detail: "ps, top, htop, kill, nice, nohup, &, jobs — monitoring and controlling ML training jobs on remote servers" },
-            { name: "Shell Scripting", detail: "Variables, loops, conditionals, functions, $?, pipelines — automating deployments, data prep, cron jobs" },
-            { name: "Networking Tools", detail: "curl, wget, netstat, ss, ping, traceroute, nslookup, tcpdump — debugging cloud connectivity issues" },
-            { name: "systemd & Services", detail: "systemctl, journalctl, unit files — managing long-running ML services on VMs" },
-            { name: "Text Processing", detail: "grep, awk, sed, cut, sort, uniq, wc — parsing logs, processing large text datasets from command line" },
-            { name: "SSH & Remote Work", detail: "ssh keys, scp, rsync, tmux/screen, port forwarding — working with remote GPU servers and cloud VMs daily" },
-          ]},
-          { title: "Python: Production-Grade", depth: "Deep", concepts: [
-            { name: "OOP & Design Patterns", detail: "Classes, inheritance, MRO, SOLID principles, Factory/Singleton/Observer patterns" },
-            { name: "Type Hints & Mypy", detail: "PEP 484, dataclasses, Pydantic models, runtime validation" },
-            { name: "Async Programming", detail: "asyncio, event loops, coroutines, aiohttp, concurrent.futures" },
-            { name: "Testing & TDD", detail: "pytest, fixtures, mocking, parametrize, coverage reports, hypothesis testing" },
-            { name: "Clean Architecture", detail: "Modular design, separation of concerns, dependency injection, packaging with pyproject.toml" },
-            { name: "Performance & Profiling", detail: "cProfile, memory_profiler, NumPy vectorization, Cython basics" },
-          ]},
-          { title: "SQL & Data Engineering", depth: "Deep", concepts: [
-            { name: "Advanced SQL", detail: "Window functions, CTEs, recursive queries, query optimization, EXPLAIN plans" },
-            { name: "Database Internals", detail: "Indexing (B-tree, Hash), MVCC, ACID properties, normalization to 3NF/BCNF" },
-            { name: "Data Pipelines", detail: "ETL vs ELT, batch vs streaming, Apache Airflow DAGs, dbt models" },
-            { name: "Distributed Storage", detail: "Parquet, Avro, Delta Lake, data lakes vs warehouses, partitioning strategies" },
-            { name: "NoSQL Patterns", detail: "MongoDB, Redis, Cassandra — when to use each; CAP theorem" },
-          ]},
-          { title: "Linear Algebra", depth: "Core", concepts: [
-            { name: "Vectors & Spaces", detail: "Basis, span, linear independence, dot product, cosine similarity (used in embeddings)" },
-            { name: "Matrix Operations", detail: "Multiplication, transpose, inverse, rank — implemented in NumPy" },
-            { name: "Eigendecomposition", detail: "Eigenvalues/eigenvectors, PCA derivation from scratch, SVD" },
-            { name: "Tensors", detail: "Understanding PyTorch tensors as generalized matrices, broadcasting rules" },
-          ]},
-          { title: "Probability & Statistics", depth: "Core", concepts: [
-            { name: "Probability Theory", detail: "Bayes theorem, conditional probability, joint/marginal distributions" },
-            { name: "Distributions", detail: "Gaussian, Bernoulli, Categorical — MLE and MAP estimation" },
-            { name: "Hypothesis Testing", detail: "p-values, confidence intervals, A/B testing, t-test, chi-square" },
-            { name: "Information Theory", detail: "Entropy, KL divergence, cross-entropy loss — why models minimize it" },
-          ]},
-          { title: "Calculus for ML", depth: "Core", concepts: [
-            { name: "Derivatives & Chain Rule", detail: "Partial derivatives, Jacobians, Hessians — foundation of backprop" },
-            { name: "Gradient Descent", detail: "SGD, momentum, adaptive methods (Adam) — derive update rules" },
-            { name: "Computational Graphs", detail: "Forward and backward passes, autograd mechanics in PyTorch" },
-          ]},
-        ]
-      },
-      {
-        id: 2, title: "Core ML & Deep Learning", subtitle: "Months 2–4", color: "#4D9FFF", icon: "⚙️",
-        modules: [
-          { title: "Classical ML Mastery", depth: "Deep", concepts: [
-            { name: "Supervised Learning", detail: "Linear/Logistic Regression, SVMs, Decision Trees, Random Forest, Gradient Boosting (XGBoost, LightGBM)" },
-            { name: "Unsupervised Learning", detail: "K-Means, DBSCAN, Hierarchical clustering, GMM, ICA, autoencoders" },
-            { name: "Model Evaluation", detail: "Bias-variance tradeoff, cross-validation, ROC/AUC, precision-recall, confusion matrix" },
-            { name: "Feature Engineering", detail: "Encoding, scaling, imputation, feature selection (SHAP, permutation importance)" },
-            { name: "Hyperparameter Tuning", detail: "Grid search, random search, Optuna (Bayesian optimization)" },
-          ]},
-          { title: "PyTorch Deep Dive", depth: "Deep", concepts: [
-            { name: "Tensor Operations", detail: "Broadcasting, in-place ops, device management (CPU/GPU), memory layout" },
-            { name: "nn.Module Architecture", detail: "Custom layers, parameter management, hooks, forward() design patterns" },
-            { name: "Training Loop Mastery", detail: "DataLoader, custom Datasets, gradient accumulation, mixed precision (AMP)" },
-            { name: "Optimization", detail: "Learning rate schedulers, gradient clipping, weight decay, SAM optimizer" },
-            { name: "Debugging & Profiling", detail: "torch.profiler, anomaly detection, NaN/Inf debugging, torchinfo" },
-          ]},
-          { title: "Neural Network Architectures", depth: "Deep", concepts: [
-            { name: "CNNs", detail: "Conv2d mechanics, receptive fields, ResNet skip connections, EfficientNet, transfer learning" },
-            { name: "RNNs & LSTMs", detail: "Vanishing gradients, BPTT, gated mechanisms, sequence-to-sequence" },
-            { name: "Transformers from Scratch", detail: "Multi-head attention, positional encoding, encoder-decoder, KV cache" },
-            { name: "Vision Transformers", detail: "ViT patch embeddings, CLIP, DINO — how vision meets language" },
-            { name: "Generative Models", detail: "VAEs, GANs (training stability), Diffusion models (DDPM), flow matching" },
-          ]},
-          { title: "End-to-End ML Pipelines", depth: "Practical", concepts: [
-            { name: "Data Versioning", detail: "DVC for dataset tracking, data lineage, reproducibility" },
-            { name: "Experiment Tracking", detail: "MLflow runs/experiments, Weights & Biases, artifact logging" },
-            { name: "Model Serialization", detail: "TorchScript, ONNX export, model versioning best practices" },
-            { name: "Kaggle Strategy", detail: "EDA workflow, ensemble methods, leakage detection, pseudo-labeling" },
-          ]},
-        ]
-      },
-      {
-        id: 3, title: "Cloud + MLOps", subtitle: "Months 4–6", color: "#FF6B6B", icon: "☁️",
-        modules: [
-          { title: "Docker & Containerization", depth: "Deep", concepts: [
-            { name: "Dockerfile Mastery", detail: "Multi-stage builds, layer caching, .dockerignore, non-root users, distroless images" },
-            { name: "Networking & Volumes", detail: "Bridge/host networks, bind mounts, named volumes, docker-compose orchestration" },
-            { name: "Container Security", detail: "Image scanning (Trivy), secrets management, capability dropping" },
-            { name: "GPU Containers", detail: "NVIDIA Docker runtime, CUDA base images, gpu resource allocation" },
-          ]},
-          { title: "Kubernetes for ML", depth: "Core", concepts: [
-            { name: "Core Concepts", detail: "Pods, Deployments, Services, ConfigMaps, Secrets, Namespaces" },
-            { name: "ML Workloads", detail: "Jobs, CronJobs for training, StatefulSets, PersistentVolumeClaims for model storage" },
-            { name: "Scaling", detail: "HPA, VPA, KEDA for event-driven autoscaling of inference services" },
-            { name: "Helm Charts", detail: "Packaging ML apps, templating, values override for environments" },
-          ]},
-          { title: "AWS for ML Engineers", depth: "Deep", concepts: [
-            { name: "Core Services", detail: "EC2 (P/G instances for GPU), S3 (data lake), IAM (least privilege), VPC design" },
-            { name: "SageMaker", detail: "Training jobs, hyperparameter tuning, model registry, pipelines, endpoints, Shadow deployments" },
-            { name: "Data Services", detail: "Glue ETL, Athena, EMR (Spark), Kinesis for streaming, RDS/DynamoDB" },
-            { name: "Serverless ML", detail: "Lambda for inference, API Gateway, Step Functions for orchestration" },
-            { name: "Cost Optimization", detail: "Spot instances for training, reserved instances, S3 storage tiers, right-sizing" },
-          ]},
-          { title: "CI/CD for ML (MLOps)", depth: "Deep", concepts: [
-            { name: "ML Pipelines", detail: "MLflow Pipelines, Kubeflow Pipelines, Vertex AI Pipelines — DAG design" },
-            { name: "Model Testing", detail: "Data validation (Great Expectations), model unit tests, shadow mode testing" },
-            { name: "Monitoring & Drift", detail: "Evidently AI, data drift detection, concept drift, model degradation alerts" },
-            { name: "GitHub Actions for ML", detail: "Automated training triggers, model evaluation gates, deployment workflows" },
-            { name: "Feature Stores", detail: "Feast, Tecton — online vs offline stores, point-in-time correctness" },
-          ]},
-          { title: "Cloud Certifications", depth: "Practical", concepts: [
-            { name: "AWS Cloud Practitioner", detail: "Core services overview, pricing models, security basics — 3-4 weeks prep" },
-            { name: "AWS ML Specialty", detail: "Data engineering, modeling, deployment, monitoring — deep ML focus" },
-            { name: "GCP Professional ML", detail: "Vertex AI, BigQuery ML, TensorFlow on GCP, MLOps on GCP" },
-          ]},
-        ]
-      },
-      {
-        id: 4, title: "Modern AI Stack", subtitle: "Months 6–9", color: "#C77DFF", icon: "🤖",
-        modules: [
-          { title: "LLMs: Deep Understanding", depth: "Deep", concepts: [
-            { name: "Pre-training & Architecture", detail: "GPT vs BERT, tokenization (BPE, SentencePiece), scaling laws, emergent abilities" },
-            { name: "Fine-tuning Techniques", detail: "Full fine-tuning, LoRA, QLoRA, instruction tuning, RLHF, DPO, PPO" },
-            { name: "Inference Optimization", detail: "Quantization (INT8, INT4), KV-cache optimization, speculative decoding, vLLM" },
-            { name: "Evaluation", detail: "MMLU, HumanEval, BIG-bench, LLM-as-judge, evals design, red-teaming" },
-            { name: "Open Source Models", detail: "Llama 3, Mistral, Gemma — running locally with Ollama, GGUF format" },
-          ]},
-          { title: "RAG Systems (Production)", depth: "Deep", concepts: [
-            { name: "Chunking Strategies", detail: "Fixed-size, recursive, semantic chunking, late chunking — tradeoffs" },
-            { name: "Embedding Models", detail: "text-embedding-3, BGE, E5 — fine-tuning embeddings for domain data" },
-            { name: "Vector Databases", detail: "Pinecone, Milvus, Qdrant, pgvector — HNSW index, ANN search, metadata filtering" },
-            { name: "Retrieval Techniques", detail: "Hybrid search (BM25 + dense), reranking (Cohere, cross-encoders), HyDE, multi-query" },
-            { name: "RAG Evaluation", detail: "RAGAS framework — faithfulness, answer relevancy, context precision metrics" },
-            { name: "Advanced RAG", detail: "GraphRAG, agentic RAG, corrective RAG, self-RAG — know the taxonomy" },
-          ]},
-          { title: "Agentic AI Systems", depth: "Deep", concepts: [
-            { name: "Agent Architecture", detail: "ReAct pattern, tool calling, function schemas, planning loops, memory systems" },
-            { name: "LangChain Deep Dive", detail: "LCEL chains, custom tools, retrievers, callbacks, LangSmith tracing" },
-            { name: "LangGraph", detail: "State machines for agents, cycles, human-in-the-loop, multi-agent graphs" },
-            { name: "AutoGen / CrewAI", detail: "Multi-agent coordination, role assignment, group chat patterns" },
-            { name: "Guardrails & Safety", detail: "Output validation, Guardrails AI, NeMo Guardrails, hallucination detection" },
-            { name: "Memory Systems", detail: "Short-term (context), long-term (vector store), episodic (event logs), semantic memory" },
-          ]},
-          { title: "LLM APIs & Prompt Engineering", depth: "Core", concepts: [
-            { name: "API Mastery", detail: "OpenAI, Anthropic, Gemini — streaming, function calling, vision, structured outputs" },
-            { name: "Prompt Engineering", detail: "Chain-of-thought, few-shot, system prompts, meta-prompting, adversarial prompting" },
-            { name: "Cost & Latency Optimization", detail: "Prompt caching, token counting, batching, model routing (cheap vs expensive)" },
-            { name: "Observability", detail: "LangSmith, Phoenix (Arize), tracing, span tracking, cost dashboards" },
-          ]},
-        ]
-      },
-      {
-        id: 5, title: "Portfolio & Career", subtitle: "Months 9–12", color: "#FFD166", icon: "🏗️",
-        modules: [
-          { title: "Portfolio Projects (Tier 1)", depth: "Practical", concepts: [
-            { name: "Cloud ML API", detail: "Train model → containerize → deploy to AWS ECS/Lambda → API Gateway → monitoring dashboard" },
-            { name: "RAG Chatbot", detail: "Ingest PDFs → chunk → embed → store in Pinecone → FastAPI backend → Streamlit UI → deploy" },
-            { name: "AI Agent", detail: "Tool-using agent with web search + calculator + code executor → LangGraph state machine → deployed" },
-          ]},
-          { title: "Engineering Best Practices", depth: "Deep", concepts: [
-            { name: "System Design for ML", detail: "Feature pipelines, model serving (online vs batch), caching layers, A/B test infrastructure" },
-            { name: "API Design", detail: "FastAPI, REST vs gRPC, async endpoints, rate limiting, auth (JWT/OAuth), OpenAPI docs" },
-            { name: "Observability Stack", detail: "Prometheus + Grafana, structured logging (structlog), distributed tracing (OpenTelemetry)" },
-            { name: "Security for ML", detail: "Prompt injection defense, model theft prevention, data privacy (PII scrubbing), GDPR basics" },
-          ]},
-          { title: "Interview Preparation", depth: "Practical", concepts: [
-            { name: "ML System Design", detail: "Design a recommendation system, fraud detection system, search ranking — practice 20+ problems" },
-            { name: "Coding Interviews", detail: "LeetCode Medium (arrays, graphs, DP), ML coding (implement backprop, attention, k-means)" },
-            { name: "ML Theory", detail: "Be ready to derive gradient descent, explain attention mechanism, bias-variance decomposition" },
-            { name: "Behavioral (STAR)", detail: "Projects, failures, disagreements — frame everything around measurable impact" },
-          ]},
-          { title: "Career Strategy", depth: "Practical", concepts: [
-            { name: "GitHub Presence", detail: "Pinned repos with READMEs, demos, architecture diagrams — treat it as a product" },
-            { name: "LinkedIn Optimization", detail: "Keywords: MLOps, LLMOps, RAG, SageMaker, PyTorch — recruiters search these" },
-            { name: "Target Companies", detail: "Big Tech (FAANG), AI Labs (OpenAI, Anthropic, Cohere), MLOps startups, AI unicorns" },
-            { name: "Open Source Contributions", detail: "Fix issues in LangChain, Hugging Face, MLflow — shows real-world collaboration" },
-          ]},
-        ]
-      }
-    ];
+  <!-- PHASE TABS -->
+  <div id="tabs"></div>
 
-    const STORAGE_KEY = 'tanmoy_roadmap_progress_v1';
-    const PHASE_KEY   = 'tanmoy_roadmap_phase_v1';
+  <!-- MOBILE PHASE BAR -->
+  <div id="mobile-phase-bar">
+    <div>
+      <div id="mobile-phase-label"></div>
+      <div id="mobile-phase-sub"></div>
+    </div>
+    <button id="btn-open-drawer">Modules ☰</button>
+  </div>
 
-    function loadProgress() {
-      try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : {}; }
-      catch(e) { return {}; }
-    }
+  <!-- BODY -->
+  <div id="body">
 
-    function loadPhase() {
-      try { const raw = localStorage.getItem(PHASE_KEY); return raw !== null ? parseInt(raw, 10) : 0; }
-      catch(e) { return 0; }
-    }
+    <!-- DESKTOP SIDEBAR -->
+    <div id="sidebar">
+      <div id="sidebar-header">
+        <div id="sidebar-phase-label"></div>
+        <div id="sidebar-phase-sub"></div>
+        <div id="sidebar-phase-bar-wrap">
+          <div id="sidebar-phase-bar"></div>
+        </div>
+      </div>
+      <div id="sidebar-modules"></div>
+    </div>
 
-    function Roadmap() {
-      const [activePhase, setActivePhase] = useState(() => loadPhase());
-      const [activeModule, setActiveModule] = useState(null);
-      const [completedConcepts, setCompletedConcepts] = useState(() => loadProgress());
-      const [saveFlash, setSaveFlash] = useState(false);
-
-      const phase = phases[activePhase];
-
-      const switchPhase = (i) => {
-        setActivePhase(i);
-        setActiveModule(null);
-        try { localStorage.setItem(PHASE_KEY, String(i)); } catch(e) {}
-      };
-
-      const toggleConcept = (phaseId, moduleIdx, conceptIdx) => {
-        const key = `${phaseId}-${moduleIdx}-${conceptIdx}`;
-        setCompletedConcepts(prev => {
-          const updated = { ...prev, [key]: !prev[key] };
-          try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-            setSaveFlash(true);
-            setTimeout(() => setSaveFlash(false), 1200);
-          } catch(e) {}
-          return updated;
-        });
-      };
-
-      const resetAll = () => {
-        if (!window.confirm('Reset ALL progress? This cannot be undone.')) return;
-        setCompletedConcepts({});
-        try { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(PHASE_KEY); } catch(e) {}
-      };
-
-      const getPhaseProgress = (p) => {
-        let total = 0, done = 0;
-        p.modules.forEach((m, mi) => m.concepts.forEach((_, ci) => {
-          total++;
-          if (completedConcepts[`${p.id}-${mi}-${ci}`]) done++;
-        }));
-        return total ? Math.round((done / total) * 100) : 0;
-      };
-
-      const totalProgress = Math.round(phases.reduce((acc, p) => acc + getPhaseProgress(p), 0) / phases.length);
-
-      // ── responsive breakpoint ──────────────────────────────────
-      const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
-      const [sidebarOpen, setSidebarOpen] = useState(false);
-
-      React.useEffect(() => {
-        const fn = () => setIsMobile(window.innerWidth < 768);
-        window.addEventListener('resize', fn);
-        return () => window.removeEventListener('resize', fn);
-      }, []);
-
-      // close sidebar overlay when module selected on mobile
-      const pickModule = (mi) => {
-        setActiveModule(mi);
-        if (isMobile) setSidebarOpen(false);
-      };
-
-      const depthColor = (d) => d === "Deep" ? "#ff6b6b" : d === "Core" ? "#4d9fff" : "#ffb347";
-      const depthBg    = (d) => d === "Deep" ? "#ff6b6b18" : d === "Core" ? "#4d9fff18" : "#ffb34718";
-
-      // ── SIDEBAR CONTENT (shared desktop + mobile) ───────────────
-      const SidebarContent = () => (
-        <>
-          <div style={{ padding: "12px 14px 10px", borderBottom: "1px solid #1a1a2e", marginBottom: "4px" }}>
-            <div style={{ fontSize: "9px", letterSpacing: "3px", color: "#555", textTransform: "uppercase" }}>{phase.icon} {phase.title}</div>
-            <div style={{ fontSize: "11px", color: "#444", marginTop: "2px" }}>{phase.subtitle}</div>
-            <div style={{ marginTop: "8px", height: "3px", background: "#1a1a2e", borderRadius: "2px" }}>
-              <div style={{ height: "100%", width: `${getPhaseProgress(phase)}%`, background: phase.color, borderRadius: "2px", transition: "width 0.4s" }} />
-            </div>
-          </div>
-          {phase.modules.map((mod, mi) => {
-            const modDone = mod.concepts.filter((_, ci) => completedConcepts[`${phase.id}-${mi}-${ci}`]).length;
-            const isAct = activeModule === mi;
-            return (
-              <button key={mi} onClick={() => pickModule(isAct ? null : mi)}
-                style={{ width: "100%", textAlign: "left", background: isAct ? "#111128" : "transparent", border: "none", borderLeft: isAct ? `3px solid ${phase.color}` : "3px solid transparent", padding: "12px 14px", cursor: "pointer", transition: "all 0.15s", minHeight: "56px" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <div style={{ fontSize: "13px", color: isAct ? phase.color : "#bbb", fontWeight: isAct ? "700" : "400", fontFamily: "inherit", paddingRight: "8px" }}>{mod.title}</div>
-                  <span style={{ fontSize: "9px", color: depthColor(mod.depth), background: depthBg(mod.depth), padding: "2px 6px", borderRadius: "4px", whiteSpace: "nowrap", flexShrink: 0 }}>{mod.depth}</span>
-                </div>
-                <div style={{ fontSize: "10px", color: "#444", marginTop: "3px" }}>{modDone}/{mod.concepts.length} done</div>
-                <div style={{ marginTop: "5px", height: "2px", background: "#1a1a2e", borderRadius: "1px" }}>
-                  <div style={{ height: "100%", width: `${(modDone / mod.concepts.length) * 100}%`, background: phase.color, borderRadius: "1px", transition: "width 0.3s" }} />
-                </div>
-              </button>
-            );
-          })}
-        </>
-      );
-
-      return (
-        <div style={{ fontFamily: "'Courier New', monospace", background: "#0a0a0f", minHeight: "100vh", color: "#e0e0e0" }}>
-
-          {/* ── HEADER ───────────────────────────────────────────── */}
-          <div style={{ background: "linear-gradient(135deg, #0d0d1a 0%, #111128 100%)", borderBottom: "1px solid #222", padding: isMobile ? "12px 16px" : "18px 28px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px", position: "sticky", top: 0, zIndex: 100 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
-              {/* hamburger on mobile */}
-              {isMobile && (
-                <button onClick={() => setSidebarOpen(o => !o)}
-                  style={{ background: sidebarOpen ? "#1a1a2e" : "transparent", border: "1px solid #333", borderRadius: "8px", color: phase.color, padding: "8px 10px", cursor: "pointer", fontSize: "18px", lineHeight: 1, flexShrink: 0 }}>
-                  {sidebarOpen ? "✕" : "☰"}
-                </button>
-              )}
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: "9px", letterSpacing: "3px", color: "#555", textTransform: "uppercase" }}>Roadmap 2026</div>
-                <h1 style={{ margin: 0, fontSize: isMobile ? "14px" : "20px", fontWeight: "700", color: "#fff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Cloud & AI/ML Engineer</h1>
-              </div>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
-              {saveFlash && !isMobile && (
-                <div style={{ fontSize: "11px", color: "#00FFB2", background: "#00FFB218", border: "1px solid #00FFB244", borderRadius: "6px", padding: "4px 10px" }}>✓ Saved</div>
-              )}
-              <button onClick={resetAll}
-                style={{ fontSize: "10px", color: "#555", background: "transparent", border: "1px solid #222", borderRadius: "6px", padding: isMobile ? "6px 10px" : "4px 10px", cursor: "pointer", fontFamily: "inherit", letterSpacing: "1px" }}>
-                RESET
-              </button>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: "9px", color: "#555", letterSpacing: "2px" }}>OVERALL</div>
-                <div style={{ fontSize: isMobile ? "20px" : "24px", fontWeight: "700", color: "#00FFB2", lineHeight: 1 }}>{totalProgress}%</div>
-              </div>
-              <div style={{ width: isMobile ? "40px" : "50px", height: isMobile ? "40px" : "50px", borderRadius: "50%", border: "3px solid #1a1a2e", background: `conic-gradient(#00FFB2 ${totalProgress * 3.6}deg, #1a1a2e ${totalProgress * 3.6}deg)`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <div style={{ width: isMobile ? "30px" : "38px", height: isMobile ? "30px" : "38px", borderRadius: "50%", background: "#0d0d1a" }} />
-              </div>
-            </div>
-          </div>
-
-          {/* ── PHASE TABS ───────────────────────────────────────── */}
-          <div style={{ display: "flex", overflowX: "auto", background: "#0d0d1a", borderBottom: "1px solid #1a1a2e", padding: "0 8px", gap: "2px", WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}>
-            {phases.map((p, i) => {
-              const prog = getPhaseProgress(p);
-              const isActive = i === activePhase;
-              return (
-                <button key={p.id} onClick={() => switchPhase(i)}
-                  style={{ background: isActive ? "#111128" : "transparent", border: "none", borderBottom: isActive ? `2px solid ${p.color}` : "2px solid transparent", color: isActive ? p.color : "#555", padding: isMobile ? "10px 10px" : "12px 14px", cursor: "pointer", whiteSpace: "nowrap", fontSize: isMobile ? "10px" : "11px", fontFamily: "inherit", fontWeight: isActive ? "700" : "400", transition: "all 0.2s", display: "flex", alignItems: "center", gap: isMobile ? "4px" : "6px", flexShrink: 0, minHeight: "44px" }}>
-                  <span style={{ fontSize: isMobile ? "14px" : "13px" }}>{p.icon}</span>
-                  {!isMobile && <span>Ph.{p.id} {p.title}</span>}
-                  {isMobile && <span style={{ fontSize: "9px" }}>P{p.id}</span>}
-                  <span style={{ background: prog === 100 ? p.color : "#1a1a2e", color: prog === 100 ? "#000" : "#555", borderRadius: "10px", padding: "1px 5px", fontSize: "9px" }}>{prog}%</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* ── MOBILE SIDEBAR OVERLAY ───────────────────────────── */}
-          {isMobile && sidebarOpen && (
-            <>
-              {/* backdrop */}
-              <div onClick={() => setSidebarOpen(false)}
-                style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 200 }} />
-              {/* drawer */}
-              <div style={{ position: "fixed", top: 0, left: 0, bottom: 0, width: "80vw", maxWidth: "320px", background: "#0d0d1a", borderRight: "1px solid #1a1a2e", zIndex: 201, overflowY: "auto", paddingTop: "60px", WebkitOverflowScrolling: "touch" }}>
-                <SidebarContent />
-              </div>
-            </>
-          )}
-
-          {/* ── BODY ─────────────────────────────────────────────── */}
-          <div style={{ display: "flex", minHeight: "calc(100vh - 110px)" }}>
-
-            {/* Desktop sidebar */}
-            {!isMobile && (
-              <div style={{ width: "260px", flexShrink: 0, background: "#0d0d1a", borderRight: "1px solid #1a1a2e", overflowY: "auto" }}>
-                <SidebarContent />
-              </div>
-            )}
-
-            {/* Main Panel */}
-            <div style={{ flex: 1, padding: isMobile ? "14px" : "20px", overflowY: "auto", background: "#0a0a0f", minWidth: 0 }}>
-
-              {/* Mobile: phase label when no module open */}
-              {isMobile && activeModule === null && (
-                <div style={{ marginBottom: "12px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <div>
-                    <div style={{ fontSize: "10px", letterSpacing: "3px", color: "#555", textTransform: "uppercase" }}>{phase.icon} {phase.title}</div>
-                    <div style={{ fontSize: "12px", color: "#444" }}>{phase.subtitle} · tap a card to open</div>
-                  </div>
-                  <button onClick={() => setSidebarOpen(true)}
-                    style={{ fontSize: "11px", color: phase.color, background: `${phase.color}18`, border: `1px solid ${phase.color}44`, borderRadius: "6px", padding: "6px 10px", cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap" }}>
-                    Modules ☰
-                  </button>
-                </div>
-              )}
-
-              {activeModule === null ? (
-                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(240px, 1fr))", gap: isMobile ? "10px" : "14px" }}>
-                  {phase.modules.map((mod, mi) => {
-                    const modDone = mod.concepts.filter((_, ci) => completedConcepts[`${phase.id}-${mi}-${ci}`]).length;
-                    return (
-                      <div key={mi} onClick={() => setActiveModule(mi)}
-                        onMouseEnter={e => { if (!isMobile) e.currentTarget.style.borderColor = phase.color; }}
-                        onMouseLeave={e => { if (!isMobile) e.currentTarget.style.borderColor = "#1a1a2e"; }}
-                        style={{ background: "#111128", border: "1px solid #1a1a2e", borderRadius: "12px", padding: isMobile ? "14px" : "18px", cursor: "pointer", transition: "border-color 0.2s", display: "flex", flexDirection: "column" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "6px" }}>
-                          <div style={{ fontSize: isMobile ? "14px" : "13px", fontWeight: "700", color: "#fff", paddingRight: "8px" }}>{mod.title}</div>
-                          <span style={{ fontSize: "9px", color: depthColor(mod.depth), background: depthBg(mod.depth), padding: "2px 6px", borderRadius: "4px", whiteSpace: "nowrap", flexShrink: 0 }}>{mod.depth}</span>
-                        </div>
-                        <div style={{ fontSize: "11px", color: "#555", marginBottom: "8px" }}>{mod.concepts.length} concepts</div>
-                        {mod.concepts.slice(0, 3).map((c, ci) => (
-                          <div key={ci} style={{ fontSize: "11px", color: completedConcepts[`${phase.id}-${mi}-${ci}`] ? phase.color : "#444", marginBottom: "3px", display: "flex", gap: "6px" }}>
-                            <span>{completedConcepts[`${phase.id}-${mi}-${ci}`] ? "✓" : "○"}</span><span>{c.name}</span>
-                          </div>
-                        ))}
-                        {mod.concepts.length > 3 && <div style={{ fontSize: "10px", color: "#333", marginTop: "2px" }}>+{mod.concepts.length - 3} more...</div>}
-                        <div style={{ marginTop: "auto", paddingTop: "10px" }}>
-                          <div style={{ height: "3px", background: "#1a1a2e", borderRadius: "2px" }}>
-                            <div style={{ height: "100%", width: `${(modDone / mod.concepts.length) * 100}%`, background: phase.color, borderRadius: "2px" }} />
-                          </div>
-                          <div style={{ fontSize: "10px", color: "#444", marginTop: "4px" }}>{modDone}/{mod.concepts.length} complete</div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px", position: "sticky", top: 0, background: "#0a0a0f", paddingBottom: "12px", paddingTop: "2px", zIndex: 10, borderBottom: "1px solid #1a1a2e" }}>
-                    <button onClick={() => setActiveModule(null)}
-                      style={{ background: "#111128", border: "1px solid #222", color: "#888", padding: "8px 14px", borderRadius: "8px", cursor: "pointer", fontSize: "13px", fontFamily: "inherit", minHeight: "44px", flexShrink: 0 }}>
-                      ← Back
-                    </button>
-                    <div style={{ minWidth: 0 }}>
-                      <h2 style={{ margin: 0, fontSize: isMobile ? "15px" : "16px", color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{phase.modules[activeModule].title}</h2>
-                      <div style={{ fontSize: "10px", color: "#555", marginTop: "2px" }}>Tap to mark as learned</div>
-                    </div>
-                    {saveFlash && isMobile && (
-                      <div style={{ marginLeft: "auto", fontSize: "11px", color: "#00FFB2", background: "#00FFB218", border: "1px solid #00FFB244", borderRadius: "6px", padding: "4px 8px", flexShrink: 0 }}>✓</div>
-                    )}
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                    {phase.modules[activeModule].concepts.map((concept, ci) => {
-                      const key = `${phase.id}-${activeModule}-${ci}`;
-                      const done = completedConcepts[key];
-                      return (
-                        <div key={ci} onClick={() => toggleConcept(phase.id, activeModule, ci)}
-                          style={{ background: done ? `${phase.color}12` : "#111128", border: `1px solid ${done ? phase.color + "44" : "#1a1a2e"}`, borderRadius: "12px", padding: isMobile ? "14px 14px" : "16px 18px", cursor: "pointer", transition: "all 0.2s", display: "flex", gap: "14px", alignItems: "flex-start", minHeight: "64px" }}>
-                          <div style={{ width: "26px", height: "26px", borderRadius: "50%", flexShrink: 0, border: `2px solid ${done ? phase.color : "#333"}`, background: done ? phase.color : "transparent", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", color: done ? "#000" : "transparent", transition: "all 0.2s", marginTop: "1px" }}>✓</div>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: isMobile ? "14px" : "13px", fontWeight: "700", color: done ? phase.color : "#ddd", marginBottom: "5px" }}>{concept.name}</div>
-                            <div style={{ fontSize: isMobile ? "12px" : "11px", color: "#666", lineHeight: "1.6" }}>{concept.detail}</div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  {/* Bottom padding so last item clears mobile browser nav bar */}
-                  <div style={{ height: "32px" }} />
-                </div>
-              )}
-            </div>
+    <!-- MAIN CONTENT -->
+    <div id="main">
+      <div id="card-grid"></div>
+      <div id="concept-view">
+        <div id="concept-header">
+          <button id="btn-back">← Back</button>
+          <div id="concept-title-wrap">
+            <div id="concept-title"></div>
+            <div id="concept-hint">Tap to mark as learned</div>
           </div>
         </div>
-      );
-    }
+        <div id="concept-list"></div>
+        <div id="concept-bottom-pad"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<Roadmap />);
-  </script>
+<!-- MOBILE DRAWER OVERLAY -->
+<div id="overlay"></div>
+<div id="drawer">
+  <div id="drawer-sidebar-header">
+    <div id="drawer-phase-label"></div>
+    <div id="drawer-phase-sub"></div>
+    <div id="sidebar-phase-bar-wrap2" style="margin-top:8px;height:3px;background:#1a1a2e;border-radius:2px;">
+      <div id="drawer-phase-bar" style="height:100%;width:0%;border-radius:2px;transition:width 0.4s;"></div>
+    </div>
+  </div>
+  <div id="drawer-modules"></div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const PHASES = [
+  {
+    id:1, title:"Foundations", subtitle:"Months 1–2", color:"#00FFB2", icon:"🧱",
+    modules:[
+      { title:"DSA — Light & Targeted", depth:"Core", concepts:[
+        {name:"Arrays & HashMaps", detail:"Two-pointer, sliding window, frequency maps — the bread and butter of coding screens at startups"},
+        {name:"Stacks & Queues", detail:"Monotonic stacks, deque patterns, BFS queue — comes up in pipeline/task scheduling logic"},
+        {name:"Linked Lists", detail:"Fast/slow pointer, reversal, merge — classic screening questions, 1–2 hours to be solid"},
+        {name:"Trees & Recursion", detail:"Binary trees, DFS/BFS traversal, recursion patterns — base for understanding ML tree models too"},
+        {name:"Graph Traversal", detail:"BFS, DFS, topological sort — directly applies to DAG-based ML pipeline orchestration (Airflow, Kubeflow)"},
+        {name:"Sorting & Searching", detail:"QuickSort, MergeSort, Binary Search — know time/space complexity of each, O(n log n) intuition"},
+        {name:"Dynamic Programming (Light)", detail:"Memoization, tabulation — only need Easy/Medium DP; skip advanced DP for MLOps roles"},
+      ]},
+      { title:"Operating Systems", depth:"Core", concepts:[
+        {name:"Processes vs Threads", detail:"Fork, exec, PID, process states, context switching — critical for understanding containers and parallel training"},
+        {name:"Memory Management", detail:"Virtual memory, heap vs stack, paging, memory leaks — needed when debugging OOM kills in Kubernetes pods"},
+        {name:"File Systems & I/O", detail:"inodes, file descriptors, buffered vs unbuffered I/O, /proc filesystem — daily tools in MLOps debugging"},
+        {name:"Signals & IPC", detail:"SIGTERM, SIGKILL, pipes, sockets, shared memory — how containers communicate and shut down gracefully"},
+        {name:"Scheduling", detail:"CPU scheduling algorithms, nice values, cgroups — underpins Kubernetes resource limits and requests"},
+        {name:"Concurrency & Locks", detail:"Mutex, semaphore, deadlock, race conditions — essential for writing safe multi-threaded ML data loaders"},
+      ]},
+      { title:"Networking Fundamentals", depth:"Core", concepts:[
+        {name:"OSI & TCP/IP Model", detail:"Layers 1–7, where each protocol lives — mental model for debugging any cloud connectivity issue"},
+        {name:"DNS & HTTP/HTTPS", detail:"How DNS resolution works, HTTP verbs, status codes, TLS handshake — you'll configure this in every deployment"},
+        {name:"TCP vs UDP", detail:"Connection-oriented vs connectionless, 3-way handshake, why gRPC uses HTTP/2 over TCP"},
+        {name:"Load Balancers & Proxies", detail:"L4 vs L7 load balancing, reverse proxies (Nginx), sticky sessions — core to serving ML models at scale"},
+        {name:"REST vs gRPC", detail:"JSON over HTTP vs Protobuf over HTTP/2 — gRPC is preferred for high-throughput ML inference APIs"},
+        {name:"VPC & Subnets", detail:"CIDR blocks, public vs private subnets, NAT gateway, security groups — AWS VPC design for ML infrastructure"},
+        {name:"Ports & Firewalls", detail:"Well-known ports, iptables basics, security groups vs NACLs — debugging unreachable services in the cloud"},
+      ]},
+      { title:"Linux & Bash Mastery", depth:"Deep", concepts:[
+        {name:"File System Navigation", detail:"ls, find, locate, tree, du, df — knowing your way around a Linux filesystem blindfolded"},
+        {name:"Permissions & Users", detail:"chmod, chown, sudo, /etc/passwd, groups, umask — essential for container security and CI/CD runners"},
+        {name:"Process Management", detail:"ps, top, htop, kill, nice, nohup, &, jobs — monitoring and controlling ML training jobs on remote servers"},
+        {name:"Shell Scripting", detail:"Variables, loops, conditionals, functions, $?, pipelines — automating deployments, data prep, cron jobs"},
+        {name:"Networking Tools", detail:"curl, wget, netstat, ss, ping, traceroute, nslookup, tcpdump — debugging cloud connectivity issues"},
+        {name:"systemd & Services", detail:"systemctl, journalctl, unit files — managing long-running ML services on VMs"},
+        {name:"Text Processing", detail:"grep, awk, sed, cut, sort, uniq, wc — parsing logs, processing large text datasets from command line"},
+        {name:"SSH & Remote Work", detail:"ssh keys, scp, rsync, tmux/screen, port forwarding — working with remote GPU servers and cloud VMs daily"},
+      ]},
+      { title:"Python: Production-Grade", depth:"Deep", concepts:[
+        {name:"OOP & Design Patterns", detail:"Classes, inheritance, MRO, SOLID principles, Factory/Singleton/Observer patterns"},
+        {name:"Type Hints & Mypy", detail:"PEP 484, dataclasses, Pydantic models, runtime validation"},
+        {name:"Async Programming", detail:"asyncio, event loops, coroutines, aiohttp, concurrent.futures"},
+        {name:"Testing & TDD", detail:"pytest, fixtures, mocking, parametrize, coverage reports, hypothesis testing"},
+        {name:"Clean Architecture", detail:"Modular design, separation of concerns, dependency injection, packaging with pyproject.toml"},
+        {name:"Performance & Profiling", detail:"cProfile, memory_profiler, NumPy vectorization, Cython basics"},
+      ]},
+      { title:"SQL & Data Engineering", depth:"Deep", concepts:[
+        {name:"Advanced SQL", detail:"Window functions, CTEs, recursive queries, query optimization, EXPLAIN plans"},
+        {name:"Database Internals", detail:"Indexing (B-tree, Hash), MVCC, ACID properties, normalization to 3NF/BCNF"},
+        {name:"Data Pipelines", detail:"ETL vs ELT, batch vs streaming, Apache Airflow DAGs, dbt models"},
+        {name:"Distributed Storage", detail:"Parquet, Avro, Delta Lake, data lakes vs warehouses, partitioning strategies"},
+        {name:"NoSQL Patterns", detail:"MongoDB, Redis, Cassandra — when to use each; CAP theorem"},
+      ]},
+      { title:"Linear Algebra", depth:"Core", concepts:[
+        {name:"Vectors & Spaces", detail:"Basis, span, linear independence, dot product, cosine similarity (used in embeddings)"},
+        {name:"Matrix Operations", detail:"Multiplication, transpose, inverse, rank — implemented in NumPy"},
+        {name:"Eigendecomposition", detail:"Eigenvalues/eigenvectors, PCA derivation from scratch, SVD"},
+        {name:"Tensors", detail:"Understanding PyTorch tensors as generalized matrices, broadcasting rules"},
+      ]},
+      { title:"Probability & Statistics", depth:"Core", concepts:[
+        {name:"Probability Theory", detail:"Bayes theorem, conditional probability, joint/marginal distributions"},
+        {name:"Distributions", detail:"Gaussian, Bernoulli, Categorical — MLE and MAP estimation"},
+        {name:"Hypothesis Testing", detail:"p-values, confidence intervals, A/B testing, t-test, chi-square"},
+        {name:"Information Theory", detail:"Entropy, KL divergence, cross-entropy loss — why models minimize it"},
+      ]},
+      { title:"Calculus for ML", depth:"Core", concepts:[
+        {name:"Derivatives & Chain Rule", detail:"Partial derivatives, Jacobians, Hessians — foundation of backprop"},
+        {name:"Gradient Descent", detail:"SGD, momentum, adaptive methods (Adam) — derive update rules"},
+        {name:"Computational Graphs", detail:"Forward and backward passes, autograd mechanics in PyTorch"},
+      ]},
+    ]
+  },
+  {
+    id:2, title:"Core ML & Deep Learning", subtitle:"Months 2–4", color:"#4D9FFF", icon:"⚙️",
+    modules:[
+      { title:"Classical ML Mastery", depth:"Deep", concepts:[
+        {name:"Supervised Learning", detail:"Linear/Logistic Regression, SVMs, Decision Trees, Random Forest, Gradient Boosting (XGBoost, LightGBM)"},
+        {name:"Unsupervised Learning", detail:"K-Means, DBSCAN, Hierarchical clustering, GMM, ICA, autoencoders"},
+        {name:"Model Evaluation", detail:"Bias-variance tradeoff, cross-validation, ROC/AUC, precision-recall, confusion matrix"},
+        {name:"Feature Engineering", detail:"Encoding, scaling, imputation, feature selection (SHAP, permutation importance)"},
+        {name:"Hyperparameter Tuning", detail:"Grid search, random search, Optuna (Bayesian optimization)"},
+      ]},
+      { title:"PyTorch Deep Dive", depth:"Deep", concepts:[
+        {name:"Tensor Operations", detail:"Broadcasting, in-place ops, device management (CPU/GPU), memory layout"},
+        {name:"nn.Module Architecture", detail:"Custom layers, parameter management, hooks, forward() design patterns"},
+        {name:"Training Loop Mastery", detail:"DataLoader, custom Datasets, gradient accumulation, mixed precision (AMP)"},
+        {name:"Optimization", detail:"Learning rate schedulers, gradient clipping, weight decay, SAM optimizer"},
+        {name:"Debugging & Profiling", detail:"torch.profiler, anomaly detection, NaN/Inf debugging, torchinfo"},
+      ]},
+      { title:"Neural Network Architectures", depth:"Deep", concepts:[
+        {name:"CNNs", detail:"Conv2d mechanics, receptive fields, ResNet skip connections, EfficientNet, transfer learning"},
+        {name:"RNNs & LSTMs", detail:"Vanishing gradients, BPTT, gated mechanisms, sequence-to-sequence"},
+        {name:"Transformers from Scratch", detail:"Multi-head attention, positional encoding, encoder-decoder, KV cache"},
+        {name:"Vision Transformers", detail:"ViT patch embeddings, CLIP, DINO — how vision meets language"},
+        {name:"Generative Models", detail:"VAEs, GANs (training stability), Diffusion models (DDPM), flow matching"},
+      ]},
+      { title:"End-to-End ML Pipelines", depth:"Practical", concepts:[
+        {name:"Data Versioning", detail:"DVC for dataset tracking, data lineage, reproducibility"},
+        {name:"Experiment Tracking", detail:"MLflow runs/experiments, Weights & Biases, artifact logging"},
+        {name:"Model Serialization", detail:"TorchScript, ONNX export, model versioning best practices"},
+        {name:"Kaggle Strategy", detail:"EDA workflow, ensemble methods, leakage detection, pseudo-labeling"},
+      ]},
+    ]
+  },
+  {
+    id:3, title:"Cloud + MLOps", subtitle:"Months 4–6", color:"#FF6B6B", icon:"☁️",
+    modules:[
+      { title:"Docker & Containerization", depth:"Deep", concepts:[
+        {name:"Dockerfile Mastery", detail:"Multi-stage builds, layer caching, .dockerignore, non-root users, distroless images"},
+        {name:"Networking & Volumes", detail:"Bridge/host networks, bind mounts, named volumes, docker-compose orchestration"},
+        {name:"Container Security", detail:"Image scanning (Trivy), secrets management, capability dropping"},
+        {name:"GPU Containers", detail:"NVIDIA Docker runtime, CUDA base images, gpu resource allocation"},
+      ]},
+      { title:"Kubernetes for ML", depth:"Core", concepts:[
+        {name:"Core Concepts", detail:"Pods, Deployments, Services, ConfigMaps, Secrets, Namespaces"},
+        {name:"ML Workloads", detail:"Jobs, CronJobs for training, StatefulSets, PersistentVolumeClaims for model storage"},
+        {name:"Scaling", detail:"HPA, VPA, KEDA for event-driven autoscaling of inference services"},
+        {name:"Helm Charts", detail:"Packaging ML apps, templating, values override for environments"},
+      ]},
+      { title:"AWS for ML Engineers", depth:"Deep", concepts:[
+        {name:"Core Services", detail:"EC2 (P/G instances for GPU), S3 (data lake), IAM (least privilege), VPC design"},
+        {name:"SageMaker", detail:"Training jobs, hyperparameter tuning, model registry, pipelines, endpoints, Shadow deployments"},
+        {name:"Data Services", detail:"Glue ETL, Athena, EMR (Spark), Kinesis for streaming, RDS/DynamoDB"},
+        {name:"Serverless ML", detail:"Lambda for inference, API Gateway, Step Functions for orchestration"},
+        {name:"Cost Optimization", detail:"Spot instances for training, reserved instances, S3 storage tiers, right-sizing"},
+      ]},
+      { title:"CI/CD for ML (MLOps)", depth:"Deep", concepts:[
+        {name:"ML Pipelines", detail:"MLflow Pipelines, Kubeflow Pipelines, Vertex AI Pipelines — DAG design"},
+        {name:"Model Testing", detail:"Data validation (Great Expectations), model unit tests, shadow mode testing"},
+        {name:"Monitoring & Drift", detail:"Evidently AI, data drift detection, concept drift, model degradation alerts"},
+        {name:"GitHub Actions for ML", detail:"Automated training triggers, model evaluation gates, deployment workflows"},
+        {name:"Feature Stores", detail:"Feast, Tecton — online vs offline stores, point-in-time correctness"},
+      ]},
+      { title:"Cloud Certifications", depth:"Practical", concepts:[
+        {name:"AWS Cloud Practitioner", detail:"Core services overview, pricing models, security basics — 3-4 weeks prep"},
+        {name:"AWS ML Specialty", detail:"Data engineering, modeling, deployment, monitoring — deep ML focus"},
+        {name:"GCP Professional ML", detail:"Vertex AI, BigQuery ML, TensorFlow on GCP, MLOps on GCP"},
+      ]},
+    ]
+  },
+  {
+    id:4, title:"Modern AI Stack", subtitle:"Months 6–9", color:"#C77DFF", icon:"🤖",
+    modules:[
+      { title:"LLMs: Deep Understanding", depth:"Deep", concepts:[
+        {name:"Pre-training & Architecture", detail:"GPT vs BERT, tokenization (BPE, SentencePiece), scaling laws, emergent abilities"},
+        {name:"Fine-tuning Techniques", detail:"Full fine-tuning, LoRA, QLoRA, instruction tuning, RLHF, DPO, PPO"},
+        {name:"Inference Optimization", detail:"Quantization (INT8, INT4), KV-cache optimization, speculative decoding, vLLM"},
+        {name:"Evaluation", detail:"MMLU, HumanEval, BIG-bench, LLM-as-judge, evals design, red-teaming"},
+        {name:"Open Source Models", detail:"Llama 3, Mistral, Gemma — running locally with Ollama, GGUF format"},
+      ]},
+      { title:"RAG Systems (Production)", depth:"Deep", concepts:[
+        {name:"Chunking Strategies", detail:"Fixed-size, recursive, semantic chunking, late chunking — tradeoffs"},
+        {name:"Embedding Models", detail:"text-embedding-3, BGE, E5 — fine-tuning embeddings for domain data"},
+        {name:"Vector Databases", detail:"Pinecone, Milvus, Qdrant, pgvector — HNSW index, ANN search, metadata filtering"},
+        {name:"Retrieval Techniques", detail:"Hybrid search (BM25 + dense), reranking (Cohere, cross-encoders), HyDE, multi-query"},
+        {name:"RAG Evaluation", detail:"RAGAS framework — faithfulness, answer relevancy, context precision metrics"},
+        {name:"Advanced RAG", detail:"GraphRAG, agentic RAG, corrective RAG, self-RAG — know the taxonomy"},
+      ]},
+      { title:"Agentic AI Systems", depth:"Deep", concepts:[
+        {name:"Agent Architecture", detail:"ReAct pattern, tool calling, function schemas, planning loops, memory systems"},
+        {name:"LangChain Deep Dive", detail:"LCEL chains, custom tools, retrievers, callbacks, LangSmith tracing"},
+        {name:"LangGraph", detail:"State machines for agents, cycles, human-in-the-loop, multi-agent graphs"},
+        {name:"AutoGen / CrewAI", detail:"Multi-agent coordination, role assignment, group chat patterns"},
+        {name:"Guardrails & Safety", detail:"Output validation, Guardrails AI, NeMo Guardrails, hallucination detection"},
+        {name:"Memory Systems", detail:"Short-term (context), long-term (vector store), episodic (event logs), semantic memory"},
+      ]},
+      { title:"LLM APIs & Prompt Engineering", depth:"Core", concepts:[
+        {name:"API Mastery", detail:"OpenAI, Anthropic, Gemini — streaming, function calling, vision, structured outputs"},
+        {name:"Prompt Engineering", detail:"Chain-of-thought, few-shot, system prompts, meta-prompting, adversarial prompting"},
+        {name:"Cost & Latency Optimization", detail:"Prompt caching, token counting, batching, model routing (cheap vs expensive)"},
+        {name:"Observability", detail:"LangSmith, Phoenix (Arize), tracing, span tracking, cost dashboards"},
+      ]},
+    ]
+  },
+  {
+    id:5, title:"Portfolio & Career", subtitle:"Months 9–12", color:"#FFD166", icon:"🏗️",
+    modules:[
+      { title:"Portfolio Projects (Tier 1)", depth:"Practical", concepts:[
+        {name:"Cloud ML API", detail:"Train model → containerize → deploy to AWS ECS/Lambda → API Gateway → monitoring dashboard"},
+        {name:"RAG Chatbot", detail:"Ingest PDFs → chunk → embed → store in Pinecone → FastAPI backend → Streamlit UI → deploy"},
+        {name:"AI Agent", detail:"Tool-using agent with web search + calculator + code executor → LangGraph state machine → deployed"},
+      ]},
+      { title:"Engineering Best Practices", depth:"Deep", concepts:[
+        {name:"System Design for ML", detail:"Feature pipelines, model serving (online vs batch), caching layers, A/B test infrastructure"},
+        {name:"API Design", detail:"FastAPI, REST vs gRPC, async endpoints, rate limiting, auth (JWT/OAuth), OpenAPI docs"},
+        {name:"Observability Stack", detail:"Prometheus + Grafana, structured logging (structlog), distributed tracing (OpenTelemetry)"},
+        {name:"Security for ML", detail:"Prompt injection defense, model theft prevention, data privacy (PII scrubbing), GDPR basics"},
+      ]},
+      { title:"Interview Preparation", depth:"Practical", concepts:[
+        {name:"ML System Design", detail:"Design a recommendation system, fraud detection system, search ranking — practice 20+ problems"},
+        {name:"Coding Interviews", detail:"LeetCode Medium (arrays, graphs, DP), ML coding (implement backprop, attention, k-means)"},
+        {name:"ML Theory", detail:"Be ready to derive gradient descent, explain attention mechanism, bias-variance decomposition"},
+        {name:"Behavioral (STAR)", detail:"Projects, failures, disagreements — frame everything around measurable impact"},
+      ]},
+      { title:"Career Strategy", depth:"Practical", concepts:[
+        {name:"GitHub Presence", detail:"Pinned repos with READMEs, demos, architecture diagrams — treat it as a product"},
+        {name:"LinkedIn Optimization", detail:"Keywords: MLOps, LLMOps, RAG, SageMaker, PyTorch — recruiters search these"},
+        {name:"Target Companies", detail:"Big Tech (FAANG), AI Labs (OpenAI, Anthropic, Cohere), MLOps startups, AI unicorns"},
+        {name:"Open Source Contributions", detail:"Fix issues in LangChain, Hugging Face, MLflow — shows real-world collaboration"},
+      ]},
+    ]
+  }
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+const STORAGE_KEY = 'tanmoy_roadmap_progress_v1';
+const PHASE_KEY   = 'tanmoy_roadmap_phase_v1';
+
+function loadProgress() {
+  try { const r = localStorage.getItem(STORAGE_KEY); return r ? JSON.parse(r) : {}; }
+  catch { return {}; }
+}
+function saveProgress(p) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); } catch {}
+}
+function loadPhase() {
+  try { const r = localStorage.getItem(PHASE_KEY); return r !== null ? +r : 0; }
+  catch { return 0; }
+}
+function savePhase(i) {
+  try { localStorage.setItem(PHASE_KEY, String(i)); } catch {}
+}
+
+let state = {
+  phaseIdx: loadPhase(),
+  moduleIdx: null,
+  done: loadProgress(),
+  drawerOpen: false,
+};
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function conceptKey(phaseId, mi, ci) { return `${phaseId}-${mi}-${ci}`; }
+
+function phaseProgress(p) {
+  let total = 0, done = 0;
+  p.modules.forEach((m,mi) => m.concepts.forEach((_,ci) => {
+    total++;
+    if (state.done[conceptKey(p.id,mi,ci)]) done++;
+  }));
+  return total ? Math.round(done/total*100) : 0;
+}
+
+function totalProgress() {
+  return Math.round(PHASES.reduce((a,p) => a + phaseProgress(p), 0) / PHASES.length);
+}
+
+function moduleProgress(p, mi) {
+  const m = p.modules[mi];
+  const done = m.concepts.filter((_,ci) => state.done[conceptKey(p.id,mi,ci)]).length;
+  return { done, total: m.concepts.length, pct: m.concepts.length ? Math.round(done/m.concepts.length*100) : 0 };
+}
+
+// ── FLASH SAVE ────────────────────────────────────────────────────────────────
+let flashTimer = null;
+function flashSave() {
+  const el = document.getElementById('save-flash');
+  el.classList.add('show');
+  clearTimeout(flashTimer);
+  flashTimer = setTimeout(() => el.classList.remove('show'), 1400);
+}
+
+// ── DRAWER ────────────────────────────────────────────────────────────────────
+function openDrawer() {
+  state.drawerOpen = true;
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('btn-menu').textContent = '✕';
+}
+function closeDrawer() {
+  state.drawerOpen = false;
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+  document.getElementById('btn-menu').textContent = '☰';
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render() {
+  const phase = PHASES[state.phaseIdx];
+  const color = phase.color;
+  const prog  = totalProgress();
+
+  // CSS variable for phase color (used in CSS for concept rows etc.)
+  document.documentElement.style.setProperty('--phase-color', color);
+  document.documentElement.style.setProperty('--concept-done-bg',  color + '12');
+  document.documentElement.style.setProperty('--concept-done-border', color + '44');
+
+  // ── overall progress ──
+  document.getElementById('progress-pct').textContent = prog + '%';
+  document.getElementById('progress-ring-wrap').style.background =
+    `conic-gradient(${color} ${prog*3.6}deg, #1a1a2e ${prog*3.6}deg)`;
+
+  // ── tabs ──
+  const tabsEl = document.getElementById('tabs');
+  tabsEl.innerHTML = '';
+  PHASES.forEach((p, i) => {
+    const pp = phaseProgress(p);
+    const active = i === state.phaseIdx;
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn' + (active ? ' active' : '');
+    btn.style.color = active ? p.color : '#555';
+    btn.style.borderBottomColor = active ? p.color : 'transparent';
+    btn.innerHTML =
+      `<span class="tab-icon">${p.icon}</span>` +
+      `<span class="tab-label">Ph.${p.id} ${p.title}</span>` +
+      `<span class="tab-badge${pp===100?' done':''}" style="background:${pp===100?p.color:'#1a1a2e'};color:${pp===100?'#000':'#555'}">${pp}%</span>`;
+    btn.addEventListener('click', () => switchPhase(i));
+    tabsEl.appendChild(btn);
+  });
+
+  // ── sidebar header (desktop + drawer) ──
+  function fillSidebarHeader(labelId, subId, barId) {
+    const lbl = document.getElementById(labelId);
+    const sub = document.getElementById(subId);
+    const bar = document.getElementById(barId);
+    if (lbl) lbl.textContent = phase.icon + ' ' + phase.title;
+    if (sub) sub.textContent = phase.subtitle;
+    if (bar) { bar.style.background = color; bar.style.width = phaseProgress(phase) + '%'; }
+  }
+  fillSidebarHeader('sidebar-phase-label','sidebar-phase-sub','sidebar-phase-bar');
+  fillSidebarHeader('drawer-phase-label','drawer-phase-sub','drawer-phase-bar');
+
+  // ── mobile phase bar ──
+  document.getElementById('mobile-phase-label').textContent = phase.icon + ' ' + phase.title.toUpperCase();
+  document.getElementById('mobile-phase-sub').textContent = phase.subtitle;
+  const openBtn = document.getElementById('btn-open-drawer');
+  openBtn.style.color = color;
+  openBtn.style.background = color + '18';
+  openBtn.style.borderColor = color + '44';
+
+  // ── module list builder ──
+  function buildModuleList(containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    phase.modules.forEach((mod, mi) => {
+      const { done, total, pct } = moduleProgress(phase, mi);
+      const active = state.moduleIdx === mi;
+      const btn = document.createElement('button');
+      btn.className = 'mod-btn' + (active ? ' active' : '');
+      btn.style.borderLeftColor = active ? color : 'transparent';
+      btn.innerHTML = `
+        <div class="mod-btn-top">
+          <span class="mod-btn-title" style="color:${active?color:'#bbb'}">${mod.title}</span>
+          <span class="depth-badge depth-${mod.depth}">${mod.depth}</span>
+        </div>
+        <div class="mod-btn-sub">${done}/${total} done</div>
+        <div class="mod-btn-bar-wrap">
+          <div class="mod-btn-bar" style="width:${pct}%;background:${color}"></div>
+        </div>`;
+      btn.addEventListener('click', () => {
+        state.moduleIdx = (state.moduleIdx === mi) ? null : mi;
+        closeDrawer();
+        render();
+      });
+      container.appendChild(btn);
+    });
+  }
+  buildModuleList('sidebar-modules');
+  buildModuleList('drawer-modules');
+
+  // ── main panel ──
+  const cardGrid    = document.getElementById('card-grid');
+  const conceptView = document.getElementById('concept-view');
+
+  if (state.moduleIdx === null) {
+    // show cards
+    cardGrid.style.display = 'grid';
+    conceptView.classList.remove('visible');
+
+    cardGrid.innerHTML = '';
+    phase.modules.forEach((mod, mi) => {
+      const { done, total, pct } = moduleProgress(phase, mi);
+      const card = document.createElement('div');
+      card.className = 'mod-card';
+      card.style.setProperty('--phase-color', color);
+
+      let previewHTML = mod.concepts.slice(0,3).map((c,ci) => {
+        const isDone = !!state.done[conceptKey(phase.id, mi, ci)];
+        return `<div class="card-preview${isDone?' done':''}">`+
+          `<span>${isDone?'✓':'○'}</span><span>${c.name}</span></div>`;
+      }).join('');
+      if (total > 3) previewHTML += `<div class="card-more">+${total-3} more...</div>`;
+
+      card.innerHTML = `
+        <div class="card-top">
+          <div class="card-title">${mod.title}</div>
+          <span class="depth-badge depth-${mod.depth}">${mod.depth}</span>
+        </div>
+        <div class="card-count">${total} concepts</div>
+        ${previewHTML}
+        <div class="card-bar-wrap">
+          <div class="card-bar-track">
+            <div class="card-bar-fill" style="width:${pct}%;background:${color}"></div>
+          </div>
+          <div class="card-bar-label">${done}/${total} complete</div>
+        </div>`;
+      card.addEventListener('click', () => { state.moduleIdx = mi; render(); });
+      cardGrid.appendChild(card);
+    });
+
+  } else {
+    // show concepts
+    cardGrid.style.display = 'none';
+    conceptView.classList.add('visible');
+
+    const mod = phase.modules[state.moduleIdx];
+    document.getElementById('concept-title').textContent = mod.title;
+
+    const list = document.getElementById('concept-list');
+    list.innerHTML = '';
+    mod.concepts.forEach((concept, ci) => {
+      const key  = conceptKey(phase.id, state.moduleIdx, ci);
+      const done = !!state.done[key];
+      const row  = document.createElement('div');
+      row.className = 'concept-row' + (done ? ' done' : '');
+      row.innerHTML = `
+        <div class="concept-check">✓</div>
+        <div class="concept-body">
+          <div class="concept-name">${concept.name}</div>
+          <div class="concept-detail">${concept.detail}</div>
+        </div>`;
+      row.addEventListener('click', () => {
+        state.done[key] = !state.done[key];
+        saveProgress(state.done);
+        flashSave();
+        render();
+      });
+      list.appendChild(row);
+    });
+
+    // scroll concept view to top
+    document.getElementById('main').scrollTop = 0;
+  }
+}
+
+// ── ACTIONS ───────────────────────────────────────────────────────────────────
+function switchPhase(i) {
+  state.phaseIdx = i;
+  state.moduleIdx = null;
+  savePhase(i);
+  closeDrawer();
+  document.getElementById('main').scrollTop = 0;
+  render();
+}
+
+// ── EVENTS ────────────────────────────────────────────────────────────────────
+document.getElementById('btn-menu').addEventListener('click', () => {
+  state.drawerOpen ? closeDrawer() : openDrawer();
+});
+document.getElementById('overlay').addEventListener('click', closeDrawer);
+document.getElementById('btn-open-drawer').addEventListener('click', openDrawer);
+document.getElementById('btn-back').addEventListener('click', () => {
+  state.moduleIdx = null;
+  document.getElementById('main').scrollTop = 0;
+  render();
+});
+document.getElementById('btn-reset').addEventListener('click', () => {
+  if (!confirm('Reset ALL progress? This cannot be undone.')) return;
+  state.done = {};
+  state.phaseIdx = 0;
+  state.moduleIdx = null;
+  try { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(PHASE_KEY); } catch {}
+  render();
+});
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+render();
+</script>
 </body>
 </html>
