@@ -285,119 +285,192 @@
 
       const totalProgress = Math.round(phases.reduce((acc, p) => acc + getPhaseProgress(p), 0) / phases.length);
 
+      // ── responsive breakpoint ──────────────────────────────────
+      const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+      const [sidebarOpen, setSidebarOpen] = useState(false);
+
+      React.useEffect(() => {
+        const fn = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', fn);
+        return () => window.removeEventListener('resize', fn);
+      }, []);
+
+      // close sidebar overlay when module selected on mobile
+      const pickModule = (mi) => {
+        setActiveModule(mi);
+        if (isMobile) setSidebarOpen(false);
+      };
+
+      const depthColor = (d) => d === "Deep" ? "#ff6b6b" : d === "Core" ? "#4d9fff" : "#ffb347";
+      const depthBg    = (d) => d === "Deep" ? "#ff6b6b18" : d === "Core" ? "#4d9fff18" : "#ffb34718";
+
+      // ── SIDEBAR CONTENT (shared desktop + mobile) ───────────────
+      const SidebarContent = () => (
+        <>
+          <div style={{ padding: "12px 14px 10px", borderBottom: "1px solid #1a1a2e", marginBottom: "4px" }}>
+            <div style={{ fontSize: "9px", letterSpacing: "3px", color: "#555", textTransform: "uppercase" }}>{phase.icon} {phase.title}</div>
+            <div style={{ fontSize: "11px", color: "#444", marginTop: "2px" }}>{phase.subtitle}</div>
+            <div style={{ marginTop: "8px", height: "3px", background: "#1a1a2e", borderRadius: "2px" }}>
+              <div style={{ height: "100%", width: `${getPhaseProgress(phase)}%`, background: phase.color, borderRadius: "2px", transition: "width 0.4s" }} />
+            </div>
+          </div>
+          {phase.modules.map((mod, mi) => {
+            const modDone = mod.concepts.filter((_, ci) => completedConcepts[`${phase.id}-${mi}-${ci}`]).length;
+            const isAct = activeModule === mi;
+            return (
+              <button key={mi} onClick={() => pickModule(isAct ? null : mi)}
+                style={{ width: "100%", textAlign: "left", background: isAct ? "#111128" : "transparent", border: "none", borderLeft: isAct ? `3px solid ${phase.color}` : "3px solid transparent", padding: "12px 14px", cursor: "pointer", transition: "all 0.15s", minHeight: "56px" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div style={{ fontSize: "13px", color: isAct ? phase.color : "#bbb", fontWeight: isAct ? "700" : "400", fontFamily: "inherit", paddingRight: "8px" }}>{mod.title}</div>
+                  <span style={{ fontSize: "9px", color: depthColor(mod.depth), background: depthBg(mod.depth), padding: "2px 6px", borderRadius: "4px", whiteSpace: "nowrap", flexShrink: 0 }}>{mod.depth}</span>
+                </div>
+                <div style={{ fontSize: "10px", color: "#444", marginTop: "3px" }}>{modDone}/{mod.concepts.length} done</div>
+                <div style={{ marginTop: "5px", height: "2px", background: "#1a1a2e", borderRadius: "1px" }}>
+                  <div style={{ height: "100%", width: `${(modDone / mod.concepts.length) * 100}%`, background: phase.color, borderRadius: "1px", transition: "width 0.3s" }} />
+                </div>
+              </button>
+            );
+          })}
+        </>
+      );
+
       return (
         <div style={{ fontFamily: "'Courier New', monospace", background: "#0a0a0f", minHeight: "100vh", color: "#e0e0e0" }}>
 
-          {/* Header */}
-          <div style={{ background: "linear-gradient(135deg, #0d0d1a 0%, #111128 100%)", borderBottom: "1px solid #222", padding: "20px 28px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>
-            <div>
-              <div style={{ fontSize: "10px", letterSpacing: "4px", color: "#555", marginBottom: "3px", textTransform: "uppercase" }}>Career Roadmap 2026</div>
-              <h1 style={{ margin: 0, fontSize: "clamp(16px, 2.5vw, 22px)", fontWeight: "700", color: "#fff", letterSpacing: "-0.5px" }}>Cloud & AI/ML Engineer</h1>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-              {saveFlash && (
-                <div style={{ fontSize: "11px", color: "#00FFB2", background: "#00FFB218", border: "1px solid #00FFB244", borderRadius: "6px", padding: "4px 10px", transition: "opacity 0.3s" }}>
-                  ✓ Saved
-                </div>
+          {/* ── HEADER ───────────────────────────────────────────── */}
+          <div style={{ background: "linear-gradient(135deg, #0d0d1a 0%, #111128 100%)", borderBottom: "1px solid #222", padding: isMobile ? "12px 16px" : "18px 28px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px", position: "sticky", top: 0, zIndex: 100 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
+              {/* hamburger on mobile */}
+              {isMobile && (
+                <button onClick={() => setSidebarOpen(o => !o)}
+                  style={{ background: sidebarOpen ? "#1a1a2e" : "transparent", border: "1px solid #333", borderRadius: "8px", color: phase.color, padding: "8px 10px", cursor: "pointer", fontSize: "18px", lineHeight: 1, flexShrink: 0 }}>
+                  {sidebarOpen ? "✕" : "☰"}
+                </button>
               )}
-              <button onClick={resetAll} style={{ fontSize: "10px", color: "#555", background: "transparent", border: "1px solid #222", borderRadius: "6px", padding: "4px 10px", cursor: "pointer", fontFamily: "inherit", letterSpacing: "1px" }}>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: "9px", letterSpacing: "3px", color: "#555", textTransform: "uppercase" }}>Roadmap 2026</div>
+                <h1 style={{ margin: 0, fontSize: isMobile ? "14px" : "20px", fontWeight: "700", color: "#fff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Cloud & AI/ML Engineer</h1>
+              </div>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
+              {saveFlash && !isMobile && (
+                <div style={{ fontSize: "11px", color: "#00FFB2", background: "#00FFB218", border: "1px solid #00FFB244", borderRadius: "6px", padding: "4px 10px" }}>✓ Saved</div>
+              )}
+              <button onClick={resetAll}
+                style={{ fontSize: "10px", color: "#555", background: "transparent", border: "1px solid #222", borderRadius: "6px", padding: isMobile ? "6px 10px" : "4px 10px", cursor: "pointer", fontFamily: "inherit", letterSpacing: "1px" }}>
                 RESET
               </button>
               <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: "10px", color: "#555", letterSpacing: "2px" }}>OVERALL</div>
-                <div style={{ fontSize: "26px", fontWeight: "700", color: "#00FFB2", lineHeight: 1 }}>{totalProgress}%</div>
+                <div style={{ fontSize: "9px", color: "#555", letterSpacing: "2px" }}>OVERALL</div>
+                <div style={{ fontSize: isMobile ? "20px" : "24px", fontWeight: "700", color: "#00FFB2", lineHeight: 1 }}>{totalProgress}%</div>
               </div>
-              <div style={{ width: "56px", height: "56px", borderRadius: "50%", border: "3px solid #1a1a2e", background: `conic-gradient(#00FFB2 ${totalProgress * 3.6}deg, #1a1a2e ${totalProgress * 3.6}deg)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <div style={{ width: "44px", height: "44px", borderRadius: "50%", background: "#0d0d1a" }} />
+              <div style={{ width: isMobile ? "40px" : "50px", height: isMobile ? "40px" : "50px", borderRadius: "50%", border: "3px solid #1a1a2e", background: `conic-gradient(#00FFB2 ${totalProgress * 3.6}deg, #1a1a2e ${totalProgress * 3.6}deg)`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <div style={{ width: isMobile ? "30px" : "38px", height: isMobile ? "30px" : "38px", borderRadius: "50%", background: "#0d0d1a" }} />
               </div>
             </div>
           </div>
 
-          {/* Phase Tabs */}
-          <div style={{ display: "flex", overflowX: "auto", background: "#0d0d1a", borderBottom: "1px solid #1a1a2e", padding: "0 12px", gap: "2px" }}>
+          {/* ── PHASE TABS ───────────────────────────────────────── */}
+          <div style={{ display: "flex", overflowX: "auto", background: "#0d0d1a", borderBottom: "1px solid #1a1a2e", padding: "0 8px", gap: "2px", WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}>
             {phases.map((p, i) => {
               const prog = getPhaseProgress(p);
               const isActive = i === activePhase;
               return (
                 <button key={p.id} onClick={() => switchPhase(i)}
-                  style={{ background: isActive ? "#111128" : "transparent", border: "none", borderBottom: isActive ? `2px solid ${p.color}` : "2px solid transparent", color: isActive ? p.color : "#555", padding: "12px 14px", cursor: "pointer", whiteSpace: "nowrap", fontSize: "11px", fontFamily: "inherit", fontWeight: isActive ? "700" : "400", letterSpacing: "0.5px", transition: "all 0.2s", display: "flex", alignItems: "center", gap: "6px", flexShrink: 0 }}>
-                  <span>{p.icon}</span>
-                  <span>Ph.{p.id} {p.title}</span>
-                  <span style={{ background: prog === 100 ? p.color : "#1a1a2e", color: prog === 100 ? "#000" : "#555", borderRadius: "10px", padding: "1px 6px", fontSize: "9px" }}>{prog}%</span>
+                  style={{ background: isActive ? "#111128" : "transparent", border: "none", borderBottom: isActive ? `2px solid ${p.color}` : "2px solid transparent", color: isActive ? p.color : "#555", padding: isMobile ? "10px 10px" : "12px 14px", cursor: "pointer", whiteSpace: "nowrap", fontSize: isMobile ? "10px" : "11px", fontFamily: "inherit", fontWeight: isActive ? "700" : "400", transition: "all 0.2s", display: "flex", alignItems: "center", gap: isMobile ? "4px" : "6px", flexShrink: 0, minHeight: "44px" }}>
+                  <span style={{ fontSize: isMobile ? "14px" : "13px" }}>{p.icon}</span>
+                  {!isMobile && <span>Ph.{p.id} {p.title}</span>}
+                  {isMobile && <span style={{ fontSize: "9px" }}>P{p.id}</span>}
+                  <span style={{ background: prog === 100 ? p.color : "#1a1a2e", color: prog === 100 ? "#000" : "#555", borderRadius: "10px", padding: "1px 5px", fontSize: "9px" }}>{prog}%</span>
                 </button>
               );
             })}
           </div>
 
-          {/* Body */}
-          <div style={{ display: "flex", minHeight: "calc(100vh - 148px)" }}>
-
-            {/* Sidebar */}
-            <div style={{ width: "260px", flexShrink: 0, background: "#0d0d1a", borderRight: "1px solid #1a1a2e", padding: "14px 0", overflowY: "auto" }}>
-              <div style={{ padding: "0 14px 10px", borderBottom: "1px solid #1a1a2e", marginBottom: "6px" }}>
-                <div style={{ fontSize: "9px", letterSpacing: "3px", color: "#555", textTransform: "uppercase" }}>{phase.icon} {phase.title}</div>
-                <div style={{ fontSize: "11px", color: "#444", marginTop: "2px" }}>{phase.subtitle}</div>
-                <div style={{ marginTop: "8px", height: "3px", background: "#1a1a2e", borderRadius: "2px" }}>
-                  <div style={{ height: "100%", width: `${getPhaseProgress(phase)}%`, background: phase.color, borderRadius: "2px", transition: "width 0.4s" }} />
-                </div>
+          {/* ── MOBILE SIDEBAR OVERLAY ───────────────────────────── */}
+          {isMobile && sidebarOpen && (
+            <>
+              {/* backdrop */}
+              <div onClick={() => setSidebarOpen(false)}
+                style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 200 }} />
+              {/* drawer */}
+              <div style={{ position: "fixed", top: 0, left: 0, bottom: 0, width: "80vw", maxWidth: "320px", background: "#0d0d1a", borderRight: "1px solid #1a1a2e", zIndex: 201, overflowY: "auto", paddingTop: "60px", WebkitOverflowScrolling: "touch" }}>
+                <SidebarContent />
               </div>
-              {phase.modules.map((mod, mi) => {
-                const modDone = mod.concepts.filter((_, ci) => completedConcepts[`${phase.id}-${mi}-${ci}`]).length;
-                const isActive = activeModule === mi;
-                return (
-                  <button key={mi} onClick={() => setActiveModule(isActive ? null : mi)}
-                    style={{ width: "100%", textAlign: "left", background: isActive ? "#111128" : "transparent", border: "none", borderLeft: isActive ? `3px solid ${phase.color}` : "3px solid transparent", padding: "10px 14px", cursor: "pointer", transition: "all 0.15s" }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                      <div style={{ fontSize: "12px", color: isActive ? phase.color : "#bbb", fontWeight: isActive ? "700" : "400", fontFamily: "inherit" }}>{mod.title}</div>
-                      <span style={{ fontSize: "9px", color: mod.depth === "Deep" ? "#ff6b6b" : mod.depth === "Core" ? "#4d9fff" : "#ffb347", background: mod.depth === "Deep" ? "#ff6b6b18" : mod.depth === "Core" ? "#4d9fff18" : "#ffb34718", padding: "2px 5px", borderRadius: "4px" }}>{mod.depth}</span>
-                    </div>
-                    <div style={{ fontSize: "10px", color: "#444", marginTop: "3px" }}>{modDone}/{mod.concepts.length} done</div>
-                    <div style={{ marginTop: "5px", height: "2px", background: "#1a1a2e", borderRadius: "1px" }}>
-                      <div style={{ height: "100%", width: `${(modDone / mod.concepts.length) * 100}%`, background: phase.color, borderRadius: "1px", transition: "width 0.3s" }} />
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
+            </>
+          )}
+
+          {/* ── BODY ─────────────────────────────────────────────── */}
+          <div style={{ display: "flex", minHeight: "calc(100vh - 110px)" }}>
+
+            {/* Desktop sidebar */}
+            {!isMobile && (
+              <div style={{ width: "260px", flexShrink: 0, background: "#0d0d1a", borderRight: "1px solid #1a1a2e", overflowY: "auto" }}>
+                <SidebarContent />
+              </div>
+            )}
 
             {/* Main Panel */}
-            <div style={{ flex: 1, padding: "20px", overflowY: "auto", background: "#0a0a0f" }}>
+            <div style={{ flex: 1, padding: isMobile ? "14px" : "20px", overflowY: "auto", background: "#0a0a0f", minWidth: 0 }}>
+
+              {/* Mobile: phase label when no module open */}
+              {isMobile && activeModule === null && (
+                <div style={{ marginBottom: "12px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div>
+                    <div style={{ fontSize: "10px", letterSpacing: "3px", color: "#555", textTransform: "uppercase" }}>{phase.icon} {phase.title}</div>
+                    <div style={{ fontSize: "12px", color: "#444" }}>{phase.subtitle} · tap a card to open</div>
+                  </div>
+                  <button onClick={() => setSidebarOpen(true)}
+                    style={{ fontSize: "11px", color: phase.color, background: `${phase.color}18`, border: `1px solid ${phase.color}44`, borderRadius: "6px", padding: "6px 10px", cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap" }}>
+                    Modules ☰
+                  </button>
+                </div>
+              )}
+
               {activeModule === null ? (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "14px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(240px, 1fr))", gap: isMobile ? "10px" : "14px" }}>
                   {phase.modules.map((mod, mi) => {
                     const modDone = mod.concepts.filter((_, ci) => completedConcepts[`${phase.id}-${mi}-${ci}`]).length;
                     return (
                       <div key={mi} onClick={() => setActiveModule(mi)}
-                        onMouseEnter={e => e.currentTarget.style.borderColor = phase.color}
-                        onMouseLeave={e => e.currentTarget.style.borderColor = "#1a1a2e"}
-                        style={{ background: "#111128", border: "1px solid #1a1a2e", borderRadius: "10px", padding: "18px", cursor: "pointer", transition: "border-color 0.2s" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
-                          <div style={{ fontSize: "13px", fontWeight: "700", color: "#fff" }}>{mod.title}</div>
-                          <span style={{ fontSize: "9px", color: mod.depth === "Deep" ? "#ff6b6b" : mod.depth === "Core" ? "#4d9fff" : "#ffb347", background: mod.depth === "Deep" ? "#ff6b6b18" : mod.depth === "Core" ? "#4d9fff18" : "#ffb34718", padding: "2px 6px", borderRadius: "4px", whiteSpace: "nowrap", marginLeft: "8px" }}>{mod.depth}</span>
+                        onMouseEnter={e => { if (!isMobile) e.currentTarget.style.borderColor = phase.color; }}
+                        onMouseLeave={e => { if (!isMobile) e.currentTarget.style.borderColor = "#1a1a2e"; }}
+                        style={{ background: "#111128", border: "1px solid #1a1a2e", borderRadius: "12px", padding: isMobile ? "14px" : "18px", cursor: "pointer", transition: "border-color 0.2s", display: "flex", flexDirection: "column" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "6px" }}>
+                          <div style={{ fontSize: isMobile ? "14px" : "13px", fontWeight: "700", color: "#fff", paddingRight: "8px" }}>{mod.title}</div>
+                          <span style={{ fontSize: "9px", color: depthColor(mod.depth), background: depthBg(mod.depth), padding: "2px 6px", borderRadius: "4px", whiteSpace: "nowrap", flexShrink: 0 }}>{mod.depth}</span>
                         </div>
-                        <div style={{ fontSize: "11px", color: "#555", marginBottom: "10px" }}>{mod.concepts.length} concepts</div>
+                        <div style={{ fontSize: "11px", color: "#555", marginBottom: "8px" }}>{mod.concepts.length} concepts</div>
                         {mod.concepts.slice(0, 3).map((c, ci) => (
                           <div key={ci} style={{ fontSize: "11px", color: completedConcepts[`${phase.id}-${mi}-${ci}`] ? phase.color : "#444", marginBottom: "3px", display: "flex", gap: "6px" }}>
                             <span>{completedConcepts[`${phase.id}-${mi}-${ci}`] ? "✓" : "○"}</span><span>{c.name}</span>
                           </div>
                         ))}
-                        {mod.concepts.length > 3 && <div style={{ fontSize: "10px", color: "#333", marginTop: "3px" }}>+{mod.concepts.length - 3} more...</div>}
-                        <div style={{ marginTop: "12px", height: "3px", background: "#1a1a2e", borderRadius: "2px" }}>
-                          <div style={{ height: "100%", width: `${(modDone / mod.concepts.length) * 100}%`, background: phase.color, borderRadius: "2px" }} />
+                        {mod.concepts.length > 3 && <div style={{ fontSize: "10px", color: "#333", marginTop: "2px" }}>+{mod.concepts.length - 3} more...</div>}
+                        <div style={{ marginTop: "auto", paddingTop: "10px" }}>
+                          <div style={{ height: "3px", background: "#1a1a2e", borderRadius: "2px" }}>
+                            <div style={{ height: "100%", width: `${(modDone / mod.concepts.length) * 100}%`, background: phase.color, borderRadius: "2px" }} />
+                          </div>
+                          <div style={{ fontSize: "10px", color: "#444", marginTop: "4px" }}>{modDone}/{mod.concepts.length} complete</div>
                         </div>
-                        <div style={{ fontSize: "10px", color: "#444", marginTop: "4px" }}>{modDone}/{mod.concepts.length} complete</div>
                       </div>
                     );
                   })}
                 </div>
               ) : (
                 <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
-                    <button onClick={() => setActiveModule(null)} style={{ background: "#111128", border: "1px solid #222", color: "#888", padding: "5px 10px", borderRadius: "6px", cursor: "pointer", fontSize: "11px", fontFamily: "inherit" }}>← Back</button>
-                    <div>
-                      <h2 style={{ margin: 0, fontSize: "16px", color: "#fff" }}>{phase.modules[activeModule].title}</h2>
-                      <div style={{ fontSize: "10px", color: "#555", marginTop: "2px" }}>Click to mark as learned</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px", position: "sticky", top: 0, background: "#0a0a0f", paddingBottom: "12px", paddingTop: "2px", zIndex: 10, borderBottom: "1px solid #1a1a2e" }}>
+                    <button onClick={() => setActiveModule(null)}
+                      style={{ background: "#111128", border: "1px solid #222", color: "#888", padding: "8px 14px", borderRadius: "8px", cursor: "pointer", fontSize: "13px", fontFamily: "inherit", minHeight: "44px", flexShrink: 0 }}>
+                      ← Back
+                    </button>
+                    <div style={{ minWidth: 0 }}>
+                      <h2 style={{ margin: 0, fontSize: isMobile ? "15px" : "16px", color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{phase.modules[activeModule].title}</h2>
+                      <div style={{ fontSize: "10px", color: "#555", marginTop: "2px" }}>Tap to mark as learned</div>
                     </div>
+                    {saveFlash && isMobile && (
+                      <div style={{ marginLeft: "auto", fontSize: "11px", color: "#00FFB2", background: "#00FFB218", border: "1px solid #00FFB244", borderRadius: "6px", padding: "4px 8px", flexShrink: 0 }}>✓</div>
+                    )}
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                     {phase.modules[activeModule].concepts.map((concept, ci) => {
@@ -405,16 +478,18 @@
                       const done = completedConcepts[key];
                       return (
                         <div key={ci} onClick={() => toggleConcept(phase.id, activeModule, ci)}
-                          style={{ background: done ? `${phase.color}12` : "#111128", border: `1px solid ${done ? phase.color + "44" : "#1a1a2e"}`, borderRadius: "10px", padding: "16px 18px", cursor: "pointer", transition: "all 0.2s", display: "flex", gap: "14px", alignItems: "flex-start" }}>
-                          <div style={{ width: "20px", height: "20px", borderRadius: "50%", flexShrink: 0, border: `2px solid ${done ? phase.color : "#333"}`, background: done ? phase.color : "transparent", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", color: done ? "#000" : "transparent", transition: "all 0.2s", marginTop: "1px" }}>✓</div>
-                          <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: "13px", fontWeight: "700", color: done ? phase.color : "#ddd", marginBottom: "5px" }}>{concept.name}</div>
-                            <div style={{ fontSize: "11px", color: "#666", lineHeight: "1.6" }}>{concept.detail}</div>
+                          style={{ background: done ? `${phase.color}12` : "#111128", border: `1px solid ${done ? phase.color + "44" : "#1a1a2e"}`, borderRadius: "12px", padding: isMobile ? "14px 14px" : "16px 18px", cursor: "pointer", transition: "all 0.2s", display: "flex", gap: "14px", alignItems: "flex-start", minHeight: "64px" }}>
+                          <div style={{ width: "26px", height: "26px", borderRadius: "50%", flexShrink: 0, border: `2px solid ${done ? phase.color : "#333"}`, background: done ? phase.color : "transparent", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", color: done ? "#000" : "transparent", transition: "all 0.2s", marginTop: "1px" }}>✓</div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: isMobile ? "14px" : "13px", fontWeight: "700", color: done ? phase.color : "#ddd", marginBottom: "5px" }}>{concept.name}</div>
+                            <div style={{ fontSize: isMobile ? "12px" : "11px", color: "#666", lineHeight: "1.6" }}>{concept.detail}</div>
                           </div>
                         </div>
                       );
                     })}
                   </div>
+                  {/* Bottom padding so last item clears mobile browser nav bar */}
+                  <div style={{ height: "32px" }} />
                 </div>
               )}
             </div>
