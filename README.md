@@ -3,8 +3,8 @@
 > A personal, interactive learning roadmap built to track my journey toward becoming a **MLOps & Cloud Infrastructure Engineer**.  
 > Live, persistent progress tracking — works on any device via browser.
 
-🔗 **Live Site:** [tanmoy-maiti.github.io/roadmap](https://tanmoy-maiti.github.io/roadmap)
-
+🔗 **Live Site:** [[tanmoy-maiti.github.io/roadmap](https://tanmoy-maiti.github.io/roadmap)
+](https://tanmoy-maiti.github.io/MLOps_-_Cloud_Infratructure_roadmap/)
 ---
 
 ## 📸 Preview
