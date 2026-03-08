@@ -3,9 +3,9 @@
 > A personal, interactive learning roadmap built to track my journey toward becoming a **MLOps & Cloud Infrastructure Engineer**.
 > Fully responsive — works on mobile, tablet, and desktop. Zero dependencies. No install needed.
 
-🔗 **Live Site:** [tanmoy-maiti.github.io/roadmap](https://tanmoy-maiti.github.io/roadmap)
+🔗 **Live Site:** [[tanmoy-maiti.github.io/roadmap](https://tanmoy-maiti.github.io/MLOps_-_Cloud_Infratructure_roadmap/)
 
-[![GitHub Pages](https://img.shields.io/badge/Hosted_on-GitHub_Pages-222?style=flat&logo=github)](https://tanmoy-maiti.github.io/roadmap)
+[![GitHub Pages](https://img.shields.io/badge/Hosted_on-GitHub_Pages-222?style=flat&logo=github)](https://tanmoy-maiti.github.io/MLOps_-_Cloud_Infratructure_roadmap/)
 [![No Dependencies](https://img.shields.io/badge/Dependencies-Zero-00FFB2?style=flat)](#)
 [![Mobile Ready](https://img.shields.io/badge/Mobile-Ready-4D9FFF?style=flat)](#)
 
@@ -251,7 +251,7 @@ start index.html       # Windows
 xdg-open index.html    # Linux
 ```
 
-Or visit the live site → **[tanmoy-maiti.github.io/roadmap](https://tanmoy-maiti.github.io/roadmap)**
+Or visit the live site → **[tanmoy-maiti.github.io/roadmap](https://tanmoy-maiti.github.io/MLOps_-_Cloud_Infratructure_roadmap/)**
 
 ---
 
